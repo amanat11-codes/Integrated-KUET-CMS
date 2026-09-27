@@ -1,28 +1,17 @@
 #include<stdio.h>
 #include "studentDashboard.h"
+#include "studentProfilePage.h"
+#include "hallDetailsPage.h"
+#include "academicInfoPage.h"
+#include "libraryInfoPage.h"
+#include "teacherProfilePage.h"
 
-void showStudentProfilePage()
+void studentDashboard()
 {
-    printf("This is student profile page\n");
-
-}
-void showHallDetailsPage()
-{
-    printf("This is hall details page\n");
-
-}
-void showAcademicInfoPage()
-{
-    printf("This is academic info page\n");
-
-}
-void showLibraryInfoPage()
-{
-    printf("This is library info page\n");
-
-}
-void showTeacherInfoPage()
-{
-    printf("This is teacher info page\n");
-
+    printf("\tThis is student dashboard\n");
+    studentProfilePage();
+    hallDetailsPage();
+    libraryInfoPage();
+    academicInfoPage();
+    teacherProfilePage();
 }

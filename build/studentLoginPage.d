@@ -1,1 +1,3 @@
-build/studentLoginPage.o: src/studentLoginPage.c
+build/studentLoginPage.o: src/studentLoginPage.c \
+ headers/studentDashboard.h
+headers/studentDashboard.h:
