@@ -1,8 +1,10 @@
+#include<stdio.h>
+
 void updateCTMarks()
 {
     printf("You can update CT marks here\n");
 }
-void updateTermMarks();
+void updateTermMarks()
 {
     printf("You can update Term marks here\n");
 }

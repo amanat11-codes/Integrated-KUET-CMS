@@ -1,3 +1,4 @@
+#include<stdio.h>
 #include "studentDashboard.h"
 
 void showStudentProfilePage()

@@ -1,8 +1,9 @@
+#include <stdio.h>
 #include "loginPage.h"
-
+#include "studentLoginPage.h"
 void showStudentLoginPage()
 {
-    printf("This is student login page\n");
+    studentLoginPage();
 }
 void showTeacherLoginPage()
 {
@@ -18,4 +19,10 @@ void showNoticesPage()
 {
     printf("This is notices page\n");
 
+}
+
+int main(void)
+{
+    showStudentLoginPage();
+    return 0;
 }
