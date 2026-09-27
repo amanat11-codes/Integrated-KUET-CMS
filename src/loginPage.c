@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include "loginPage.h"
 #include "studentLoginPage.h"
+#include "teacherLoginPage.h"
+#include "adminLoginPage.h"
+#include "noticesPage.h"
 void showStudentLoginPage()
 {
     studentLoginPage();
 }
 void showTeacherLoginPage()
 {
-    printf("This is teacher login page\n");
-
+    teacherLoginPage();
 }
 void showAdminLoginPage()
 {
@@ -24,5 +26,8 @@ void showNoticesPage()
 int main(void)
 {
     showStudentLoginPage();
+    showTeacherLoginPage();
+    showAdminLoginPage();
+    showNoticesPage();
     return 0;
 }
