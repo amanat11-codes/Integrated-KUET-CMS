@@ -1,14 +1,13 @@
 #include<stdio.h>
+#include "ctMarksPage.h"
+#include "termExamMarksPage.h"
+#include "checkStudentProfilePage.h"
 
-void updateCTMarks()
+
+void teacherDashboard()
 {
-    printf("You can update CT marks here\n");
-}
-void updateTermMarks()
-{
-    printf("You can update Term marks here\n");
-}
-void checkStudentProfile()
-{
-    printf("You can check student profile here\n");
+    printf("\tThis is teacher dashboard\n");
+    updateCTMarks();
+    updateTermMarks();
+    checkStudentProfile();
 }
