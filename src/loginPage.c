@@ -14,8 +14,7 @@ void showTeacherLoginPage()
 }
 void showAdminLoginPage()
 {
-    printf("This is admin login page\n");
-
+    adminLoginPage();
 }
 void showNoticesPage()
 {

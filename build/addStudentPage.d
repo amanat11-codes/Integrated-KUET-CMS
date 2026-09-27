@@ -1,1 +1,2 @@
-build/addStudentPage.o: src/addStudentPage.c
+build/addStudentPage.o: src/addStudentPage.c headers/addStudentPage.h
+headers/addStudentPage.h:

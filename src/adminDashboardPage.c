@@ -1,20 +1,16 @@
-void addStudent()
+#include <stdio.h>
+#include "addStudentPage.h"
+#include "addTeacherPage.h"
+#include "editStudentPage.h"
+#include "editTeacherPage.h"
+#include "addNoticePage.h"
+
+void adminDashboard()
 {
-    printf("You can add student here\n");
-}
-void addTeacher()
-{
-    printf("You can add teacher here\n");
-}
-void editStudent()
-{
-    printf("You can edit student here\n");
-}
-void editTeacher()
-{
-    printf("You can edit teacher here\n");
-}
-void addNotice()
-{
-    printf("You can add notice here\n");
+    printf("\tThis is admin dashboard\n");
+    addStudent();
+    addTeacher();
+    editStudent();
+    editTeacher();
+    addNotice();
 }
