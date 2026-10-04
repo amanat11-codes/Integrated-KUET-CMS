@@ -43,7 +43,7 @@ void loginPage(void)
         choice = getInt("Please choose an option: ");
     }
 
-   /*switch(choice)
+   switch(choice)
     {
         case 1:
             showStudentLoginPage();
@@ -63,5 +63,5 @@ void loginPage(void)
 
         default:
             printf("Invalid choice!\n");
-    }*/
+    }
 }
