@@ -4,6 +4,11 @@
 #include "teacherLoginPage.h"
 #include "adminLoginPage.h"
 #include "noticesPage.h"
+#include "utility.h"
+
+#define CHOICE_LAST 4
+
+
 void showStudentLoginPage()
 {
     studentLoginPage();
@@ -30,10 +35,15 @@ void loginPage(void)
     printf("3. Admin Login\n");
     printf("4. Show Notices\n");
 
-    printf("Enter your choice: ");
-    scanf("%d", &choice);
+    choice = getInt("Please choose an option: ");
 
-    switch(choice)
+    while (!(choice >= 1 && choice <= CHOICE_LAST))
+    {
+        printf("Please input a valid option, between 1 and %d\n", CHOICE_LAST);
+        choice = getInt("Please choose an option: ");
+    }
+
+   /*switch(choice)
     {
         case 1:
             showStudentLoginPage();
@@ -53,5 +63,5 @@ void loginPage(void)
 
         default:
             printf("Invalid choice!\n");
-    }
+    }*/
 }

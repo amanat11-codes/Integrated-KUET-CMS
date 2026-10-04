@@ -1,13 +1,11 @@
 #include <stdio.h>
-#include "addNoticePage.h"
-
-
-void addNotice()
+#include "notifications.h"
+void viewNotifications()
 {
     printf("\t\tYou can add notice here\n");
     // Title
     // Date
     // Body
 
-    // Amanat
+    // Nayeem
 }
