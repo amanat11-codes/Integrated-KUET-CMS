@@ -2,11 +2,11 @@
 #include "addNoticePage.h"
 #include "notifications.h"
 #include "adminDashboardPage.h"
+#include "utility.h"
 
 void adminDashboard()
 {
-    printf("\tThis is admin dashboard\n");
-    
-    addNotice();
-    viewNotifications();
+    printBoxedText("ADMIN DASHBOARD PANEL");
+//    addNotice();
+  //  viewNotifications();
 }
