@@ -16,25 +16,39 @@ int getInt(char* prompt)
         while (getchar() != '\n'); // Clear the input buffer
     }
 
+    while (getchar() != '\n'); // Clear the newline before the next line-based input
     return value;
 }
 
-char *getString(char* prompt, int maxLength)
+void getString(char* prompt, int maxLength, char* dest)
 {
-    char *buffer = (char *) malloc(maxLength * sizeof(char));
+    char buffer[maxLength];
     printf("%s", prompt);
-    while (scanf("%s", buffer) != 1){
-        printf("Invalid input. Please enter a string: ");
-        while (getchar() != '\n'); // Clear the input buffer
+    while (fgets(buffer, maxLength, stdin) == NULL){
+        printf("\nInvalid input. Please enter a string: ");
     }
-    return buffer;
+
+    if (strchr(buffer, '\n') == NULL) {
+        while (getchar() != '\n' && !feof(stdin));
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0'; // Remove the newline character
+    strncpy(dest, buffer, maxLength - 1);
+    dest[maxLength - 1] = '\0'; // Ensure null termination
+}
+
+char getCharacter(char *prompt)
+{
+    printf("%s", prompt);
+    char ch;
+    scanf("%c", &ch);
+    return ch;
 }
 
 void printBoxedText(char* text)
 {
     int len = strlen(text);
     int lenX = len + 2 * PADDING + 1; // Add padding for the sides
-    int lenY = len + 2 * PADDING; // Add padding for the top and bottom
 
     printf(".");
     for (int i = 0; i < lenX - 1; i++){
@@ -60,5 +74,21 @@ void printBoxedText(char* text)
     printf(".\n");
 }
 
+void printUnderlinedText(char *text)
+{
+    int len = strlen(text) + 2 * PADDING;
+    printf("%s\n", text);
+    for (int i = 0; i < len; i++)
+    {
+        printf("-");
+    }
+    printf("\n");
+}
+
+
+void clearScreen()
+{
+    system("cls");
+}
 
 // function definition here
