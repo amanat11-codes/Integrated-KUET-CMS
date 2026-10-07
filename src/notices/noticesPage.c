@@ -5,9 +5,22 @@
 #include "utility.h"
 #include "sqlite3.h"
 
+#define TITLE_INTRO_PREVIEW_MAX_LENGTH 10
+
 void displayNoticeListItem(int serial, char* date, char* title, char* intro)
 {
-    printf("%d\t\t%s\t\t%s\t\t%s\n", serial, date, title, intro);
+    printf("%d\t%s\t", serial,date);
+    
+    if(strlen(title) > TITLE_INTRO_PREVIEW_MAX_LENGTH)
+        printf("%.*s...", TITLE_INTRO_PREVIEW_MAX_LENGTH, title);
+    else
+        printf("%s", title);
+    printf("\t");
+    if (strlen(intro) > TITLE_INTRO_PREVIEW_MAX_LENGTH)
+        printf("%.*s...", TITLE_INTRO_PREVIEW_MAX_LENGTH, intro);
+    else
+        printf("%s", intro);
+    printf("\n");
 }
 
 void showNoticeDetails(Notice n)
@@ -54,11 +67,10 @@ void fetchAllNotices(sqlite3 *db, Notice *notices)
 
 void displayNoticeList(Notice *notices, int count)
 {
-    printf("%-5s%-15s%-25s%s\n", "ID", "Date", "Title", "Desc");
+    printf("%s\t%s\t\t%s\t\t%s\n", "ID", "Date", "Title", "Description");
     printf("-------------------------------------------------------------------------------------\n");
     for (register int i = 0; i < count; i++)
-        printf("%-5d%-15s%-25s%s\n", notices[i].slNo, notices[i].date, notices[i].title, notices[i].intro);
-
+        displayNoticeListItem(notices[i].slNo, notices[i].date, notices[i].title, notices[i].intro);
 }
 
 void noticesPage(sqlite3 *db)
@@ -80,6 +92,7 @@ void noticesPage(sqlite3 *db)
     while (1)
     {
         displayNoticeList(notices, count);
+        printf("\n");
         printf("\nEnter Sl.no to open a notice (0 to go back)\n");
         choice = getInt("> ");
 
