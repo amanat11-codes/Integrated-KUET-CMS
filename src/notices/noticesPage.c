@@ -5,68 +5,73 @@
 void showNoticeDetails(Notice n)
 {
     clearScreen();
-    
-    printf("\n==================== NOTICE ====================\n");
+
+    printf("\n========== NOTICE ==========\n");
+
     printf("Sl.no : %d\n", n.slNo);
     printf("Title : %s\n", n.title);
     printf("Date  : %s\n", n.date);
-    printf("------------------------------------------------\n");
-    printf("%s\n", n.details);
-    printf("================================================\n");
+
+    printf("\n%s\n", n.details);
+
+    printf("============================\n");
+
     printf("\nPress Enter to go back...");
-    while (getchar() != '\n');
+
+    getchar();//reads the enter key
     getchar();
 }
 
+
 void noticesPage()
 {
-    clearScreen();
-    printBoxedText("NOTICES");
+    Notice notices[2] =
+    {
+        {1, "ABC", "10-04-2026", "....",
+         "Full details of notice ABC go here."},
 
-    Notice notices[] = {
-        {1, "ABC", "10-4-2026",  "....", "Full details of notice ABC go here."},
-        {2, "XYZ", "11-05-2025", "....", "Full details of notice XYZ go here."}
+        {2, "XYZ", "11-05-2026", "....",
+         "Full details of notice XYZ go here."}
     };
-    int count = sizeof(notices) / sizeof(notices[0]);
+
     int choice;
 
     while (1)
     {
         clearScreen();
-        printf("\n%-6s %-20s %-12s %s\n", "Sl.no", "Title", "Date", "Short intro");
-        printf("------------------------------------------------------\n");
 
-        for (int i = 0; i < count; i++)
-        {
-            printf("%-6d %-20s %-12s %s\n",
-                   notices[i].slNo, notices[i].title,
-                   notices[i].date, notices[i].intro);
-        }
+        printf("\n========== NOTICES ==========\n\n");
 
-        printf("\nEnter Sl.no to open a notice (0 to go back)\n");
-        printf("> ");
-        if (scanf("%d", &choice) != 1)
-        {
-            while (getchar() != '\n');
-            printf("Invalid input! Please enter a number.\n> ");
-            continue;
-        }
+        printf("1. %s\n", notices[0].title);
+        printf("   Date: %s\n", notices[0].date);
+        printf("   %s\n\n", notices[0].intro);
+
+        printf("2. %s\n", notices[1].title);
+        printf("   Date: %s\n", notices[1].date);
+        printf("   %s\n\n", notices[1].intro);
+
+        printf("Enter notice number (0 to go back): ");
+        scanf("%d", &choice);
 
         if (choice == 0)
-            return;
-
-        int found = 0;
-        for (int i = 0; i < count; i++)
         {
-            if (notices[i].slNo == choice)
-            {
-                showNoticeDetails(notices[i]);
-                found = 1;
-                break;
-            }
+            return;
         }
 
-        if (!found)
-            printf("No notice with Sl.no %d. Try again.\n", choice);
+        if (choice == 1)
+        {
+            showNoticeDetails(notices[0]);
+        }
+        else if (choice == 2)
+        {
+            showNoticeDetails(notices[1]);
+        }
+        else
+        {
+            printf("\nInvalid notice number!\n");
+            printf("Press Enter to continue...");
+            getchar();
+            getchar();
+        }
     }
 }
