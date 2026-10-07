@@ -29,39 +29,42 @@ void showNoticesPage()
 void loginPage(void)
 {
     int choice;
-
-    printf("1. Student Login\n");
-    printf("2. Teacher Login\n");
-    printf("3. Admin Login\n");
-    printf("4. Show Notices\n");
-
-    choice = getInt("Please choose an option: ");
-
-    while (!(choice >= 1 && choice <= CHOICE_LAST))
+    while (1)
     {
-        printf("Please input a valid option, between 1 and %d\n", CHOICE_LAST);
-        choice = getInt("Please choose an option: ");
-    }
+        //clearScreen();
+        printf("1. Student Login\n");
+        printf("2. Teacher Login\n");
+        printf("3. Admin Login\n");
+        printf("4. Show Notices\n");
 
-   switch(choice)
-    {
-        case 1:
-            showStudentLoginPage();
-            break;
+        choice = getInt("> ");
 
-        case 2:
-            showTeacherLoginPage();
-            break;
+        while (!(choice >= 1 && choice <= CHOICE_LAST))
+        {
+            printf("Please input a valid option, between 1 and %d\n", CHOICE_LAST);
+            choice = getInt("> ");
+        }
 
-        case 3:
-            showAdminLoginPage();
-            break;
+    switch(choice)
+        {
+            case 1:
+                showStudentLoginPage();
+                break;
 
-        case 4:
-            showNoticesPage();
-            break;
+            case 2:
+                showTeacherLoginPage();
+                break;
 
-        default:
-            printf("Invalid choice!\n");
+            case 3:
+                showAdminLoginPage();
+                break;
+
+            case 4:
+                showNoticesPage();
+                break;
+
+            default:
+                printf("Invalid choice!\n");
+        }
     }
 }

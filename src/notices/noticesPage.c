@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include "noticesPage.h"
+#include "utility.h"
 
 void showNoticeDetails(Notice n)
 {
+    clearScreen();
+    
     printf("\n==================== NOTICE ====================\n");
     printf("Sl.no : %d\n", n.slNo);
     printf("Title : %s\n", n.title);
@@ -17,17 +20,8 @@ void showNoticeDetails(Notice n)
 
 void noticesPage()
 {
-    printf("This is notices page\n");
-
-    // anyone can check notices here
-    
-    // sl.no
-    // title
-    // date
-    // short intro
-    // sl.no title date short intro
-    // 1    ABC    10-4-2026    ....
-    // 2    XYZ    11-05-2025   ....
+    clearScreen();
+    printBoxedText("NOTICES");
 
     Notice notices[] = {
         {1, "ABC", "10-4-2026",  "....", "Full details of notice ABC go here."},
@@ -38,6 +32,7 @@ void noticesPage()
 
     while (1)
     {
+        clearScreen();
         printf("\n%-6s %-20s %-12s %s\n", "Sl.no", "Title", "Date", "Short intro");
         printf("------------------------------------------------------\n");
 
@@ -48,11 +43,12 @@ void noticesPage()
                    notices[i].date, notices[i].intro);
         }
 
-        printf("\nEnter Sl.no to open a notice (0 to go back): ");
+        printf("\nEnter Sl.no to open a notice (0 to go back)\n");
+        printf("> ");
         if (scanf("%d", &choice) != 1)
         {
             while (getchar() != '\n');
-            printf("Invalid input! Please enter a number.\n");
+            printf("Invalid input! Please enter a number.\n> ");
             continue;
         }
 

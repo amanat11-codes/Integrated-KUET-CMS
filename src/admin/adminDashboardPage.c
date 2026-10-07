@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "addNoticePage.h"
 #include "notifications.h"
 #include "adminDashboardPage.h"
@@ -33,7 +34,7 @@ void adminDashboard()
                 break;
             case 3:
                 printf("Quitting...\n");
-                return;
+                exit(0);
         }
     }
 }

@@ -1,35 +1,49 @@
 #include <stdio.h>
 #include "addNoticePage.h"
 #include "adminDashboardPage.h"
+#include "noticesPage.h"
 #include "utility.h"
+#include <string.h>
+
+char* createIntro(char* details)
+{
+    static char intro[MAX_INTRO_SIZE];
+    size_t detailsLength = strlen(details);
+    size_t prefixLength = MAX_INTRO_SIZE - 1 - 3;
+
+    if (detailsLength <= prefixLength)
+    {
+        strcpy(intro, details);
+    }
+    else
+    {
+        snprintf(intro, MAX_INTRO_SIZE, "%.*s...", (int)prefixLength, details);
+    }
+
+    return intro;
+
+}
 
 void addNotice()
 {
     clearScreen();
     printUnderlinedText("Add a Notice");
-    // Title
-    // Date
-    // Body
-
     
-    char title[MAX_TITLE_LENGTH];
-    char date[MAX_DATE_LENGTH];
-    char body[MAX_BODY_LENGTH];
-
-
-
+    Notice notice;
     char ch;
 
     while ((ch = getCharacter("Press ENTER to add a notice or ANY other key to go back...\n")) == '\n')
-    {  
-        getString("Enter title: ", MAX_TITLE_LENGTH, title);
-        getString("Enter date: ", MAX_DATE_LENGTH, date);
-        getString("Enter body: ", MAX_BODY_LENGTH, body);
+    {
+        clearScreen();  
+        getString("Enter title: ", MAX_TITLE_LENGTH, notice.title);
+        getString("Enter date: ", MAX_DATE_LENGTH, notice.date);
+        getString("Enter details: ", MAX_BODY_LENGTH, notice.details);
 
-        printf("Title: %s\n", title);
-        printf("Date: %s\n", date);
-        printf("Body: %s\n", body);
+        strcpy(notice.intro, createIntro(notice.details));
+
+        printf("Title: %s\n", notice.title);
+        printf("Date: %s\n", notice.date);
+        printf("Intro: %s\n", notice.intro);
+        printf("Body: %s\n", notice.details);
     }
-
-    // Amanat
 }
