@@ -22,6 +22,7 @@ void showNoticeDetails(Notice n);
 void fetchAllNotices(sqlite3 *db, Notice *notices);
 void displayNoticeListItem(int serial, char* date, char* title, char* intro);
 void displayNoticeList(Notice *notices, int count);
+int noticeExists(sqlite3 *db, int noticeId);
 
 
 #endif

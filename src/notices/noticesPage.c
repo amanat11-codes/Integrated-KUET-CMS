@@ -73,6 +73,21 @@ void displayNoticeList(Notice *notices, int count)
         displayNoticeListItem(notices[i].slNo, notices[i].date, notices[i].title, notices[i].intro);
 }
 
+int noticeExists(sqlite3 *db, int noticeId)
+{
+    char *sql = "SELECT EXISTS (SELECT 1 FROM NOTICES WHERE notice_id = ?);";
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    sqlite3_bind_int(stmt, 1, noticeId);
+    int exists = 0;
+
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+        exists = sqlite3_column_int(stmt, 0);
+    sqlite3_finalize(stmt);
+    return exists;
+}
+
+
 void noticesPage(sqlite3 *db)
 {
     int count = getTableRows(db, "notices");
@@ -93,12 +108,12 @@ void noticesPage(sqlite3 *db)
     {
         displayNoticeList(notices, count);
         printf("\n");
-        printf("\nEnter Sl.no to open a notice (0 to go back)\n");
+        printf("\nEnter notice ID to open a notice (0 to go back)\n");
         choice = getInt("> ");
 
-        while (!(choice >= 0 && choice <= count))
+        while(!noticeExists(db, choice))
         {
-            printf("Please input a valid option, between 1 and %d\n", count);
+            printf("Please input a valid ID from the list\n");
             choice = getInt("> ");
         }
 
