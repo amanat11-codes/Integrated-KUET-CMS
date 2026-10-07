@@ -1,16 +1,16 @@
-#include<stdio.h>
-
+#include <stdio.h>
+//Toriqul
 void teacherProfilePage()
 {
-    printf("\t\tThis is teacher profile page.\n");
+    printf("\n========== TEACHER PROFILE ==========\n");
 
-    // Name
-    // Designation
-    // Phone
-    // Email
-    // Department
-    // Research Interest
-    // Link to page
+    printf("Name            : Dr. Rahman\n");
+    printf("Designation     : Professor\n");
+    printf("Phone           : 017XXXXXXXX\n");
+    printf("Email           : rahman@kuet.ac.bd\n");
+    printf("Department      : Computer Science and Engineering\n");
+    printf("Research Interest: Artificial Intelligence\n");
+    printf("Profile Link    : www.kuet.ac.bd/rahman\n");
 
-    // Toriqul
+    printf("=====================================\n");
 }
