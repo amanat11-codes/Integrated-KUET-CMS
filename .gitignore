@@ -20,9 +20,9 @@ a.out
 # SQLite database files
 # ==========================
 
-*.db
-*.sqlite
-*.sqlite3
+#*.db
+#*.sqlite
+#*.sqlite3
 
 
 # ==========================

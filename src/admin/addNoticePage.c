@@ -8,17 +8,13 @@
 char* createIntro(char* details)
 {
     static char intro[MAX_INTRO_SIZE];
-    size_t detailsLength = strlen(details);
-    size_t prefixLength = MAX_INTRO_SIZE - 1 - 3;
+    int detailsLength = strlen(details);
+    int prefixLength = MAX_INTRO_SIZE - 1 - 3;
 
     if (detailsLength <= prefixLength)
-    {
         strcpy(intro, details);
-    }
     else
-    {
-        snprintf(intro, MAX_INTRO_SIZE, "%.*s...", (int)prefixLength, details);
-    }
+        snprintf(intro, MAX_INTRO_SIZE, "%.*s...", prefixLength, details);
 
     return intro;
 

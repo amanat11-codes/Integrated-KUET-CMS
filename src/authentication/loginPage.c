@@ -21,17 +21,17 @@ void showAdminLoginPage()
 {
     adminLoginPage();
 }
-void showNoticesPage()
+void showNoticesPage(sqlite3 *db)
 {
-    noticesPage();
+    noticesPage(db);
 }
 
-void loginPage(void)
+void loginPage(sqlite3 *db)
 {
     int choice;
     while (1)
     {
-        //clearScreen();
+        clearScreen();
         printf("1. Student Login\n");
         printf("2. Teacher Login\n");
         printf("3. Admin Login\n");
@@ -60,7 +60,7 @@ void loginPage(void)
                 break;
 
             case 4:
-                showNoticesPage();
+                showNoticesPage(db);
                 break;
 
             default:

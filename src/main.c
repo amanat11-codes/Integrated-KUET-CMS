@@ -1,14 +1,18 @@
 #include <stdio.h>
 #include "loginPage.h"
-
-void showLoginPage()
+#include "database.h"
+#include "sqlite3.h"
+void showLoginPage(sqlite3 *db)
 {
-    loginPage();
+    loginPage(db);
 }
 
 int main(void)
 {
+    sqlite3 *db = createDatabase();
     
-    showLoginPage();
+    showLoginPage(db);
+
+    // reduce function calls on the stack
     return 0;
 }
