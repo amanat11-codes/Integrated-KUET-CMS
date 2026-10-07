@@ -1,72 +1,100 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "noticesPage.h"
 #include "utility.h"
+#include "sqlite3.h"
+
+void displayNoticeListItem(int serial, char* date, char* title, char* intro)
+{
+    printf("%d\t\t%s\t\t%s\t\t%s\n", serial, date, title, intro);
+}
 
 void showNoticeDetails(Notice n)
 {
     clearScreen();
     
     printf("\n==================== NOTICE ====================\n");
-    printf("Sl.no : %d\n", n.slNo);
-    printf("Title : %s\n", n.title);
-    printf("Date  : %s\n", n.date);
-    printf("------------------------------------------------\n");
-    printf("%s\n", n.details);
+    printf("%s\n%s\n%s\n", n.date, n.title, n.details);
     printf("================================================\n");
-    printf("\nPress Enter to go back...");
-    while (getchar() != '\n');
-    getchar();
+    getCharacter("Press ENTER to go back...");
+    clearScreen();
 }
 
-void noticesPage()
+void fetchAllNotices(sqlite3 *db, Notice *notices)
 {
+    char *sql = "SELECT * FROM notices;";
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    int i = 0;
+    while (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        notices[i].slNo = sqlite3_column_int(stmt, 0);
+        if ((char*)sqlite3_column_text(stmt, 1) != NULL)
+            strcpy(notices[i].date, (char*)sqlite3_column_text(stmt, 1));
+        else
+            strcpy(notices[i].date, "N/A");
+        
+        if ((char*)sqlite3_column_text(stmt, 2) != NULL)
+            strcpy(notices[i].title, (char*)sqlite3_column_text(stmt, 2));
+        else
+            strcpy(notices[i].title, "N/A");
+        if ((char*)sqlite3_column_text(stmt, 3) != NULL)
+            strcpy(notices[i].intro, (char*)sqlite3_column_text(stmt, 3));
+        else
+            strcpy(notices[i].intro, "N/A");
+        if ((char*)sqlite3_column_text(stmt, 4) != NULL)
+            strcpy(notices[i].details, (char*)sqlite3_column_text(stmt, 4));
+        else
+            strcpy(notices[i].details, "N/A");
+        i++;
+    }
+    sqlite3_finalize(stmt);
+}
+
+void displayNoticeList(Notice *notices, int count)
+{
+    printf("%-5s%-15s%-25s%s\n", "ID", "Date", "Title", "Desc");
+    printf("-------------------------------------------------------------------------------------\n");
+    for (register int i = 0; i < count; i++)
+        printf("%-5d%-15s%-25s%s\n", notices[i].slNo, notices[i].date, notices[i].title, notices[i].intro);
+
+}
+
+void noticesPage(sqlite3 *db)
+{
+    int count = getTableRows(db, "notices");
+    Notice *notices = malloc(count * sizeof(Notice));
+    if (notices == NULL && count > 0)
+    {
+        printf("Error: Failed to allocate memory for notices.\n");
+        exit(1);
+    }
+    fetchAllNotices(db, notices);
+    
     clearScreen();
     printBoxedText("NOTICES");
-
-    Notice notices[] = {
-        {1, "ABC", "10-4-2026",  "....", "Full details of notice ABC go here."},
-        {2, "XYZ", "11-05-2025", "....", "Full details of notice XYZ go here."}
-    };
-    int count = sizeof(notices) / sizeof(notices[0]);
+    
     int choice;
 
     while (1)
     {
-        clearScreen();
-        printf("\n%-6s %-20s %-12s %s\n", "Sl.no", "Title", "Date", "Short intro");
-        printf("------------------------------------------------------\n");
-
-        for (int i = 0; i < count; i++)
-        {
-            printf("%-6d %-20s %-12s %s\n",
-                   notices[i].slNo, notices[i].title,
-                   notices[i].date, notices[i].intro);
-        }
-
+        displayNoticeList(notices, count);
         printf("\nEnter Sl.no to open a notice (0 to go back)\n");
-        printf("> ");
-        if (scanf("%d", &choice) != 1)
+        choice = getInt("> ");
+
+        while (!(choice >= 0 && choice <= count))
         {
-            while (getchar() != '\n');
-            printf("Invalid input! Please enter a number.\n> ");
-            continue;
+            printf("Please input a valid option, between 1 and %d\n", count);
+            choice = getInt("> ");
         }
 
         if (choice == 0)
-            return;
-
-        int found = 0;
-        for (int i = 0; i < count; i++)
         {
-            if (notices[i].slNo == choice)
-            {
-                showNoticeDetails(notices[i]);
-                found = 1;
-                break;
-            }
+            free(notices);
+            return;
         }
 
-        if (!found)
-            printf("No notice with Sl.no %d. Try again.\n", choice);
+        showNoticeDetails(notices[choice - 1]);
     }
 }

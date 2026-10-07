@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "sqlite3.h"
 
 const int PADDING = 2;
 
@@ -45,6 +45,20 @@ char getCharacter(char *prompt)
     return ch;
 }
 
+int getTableRows(sqlite3 *db, const char *tableName)
+{
+    int count = 0;
+    char sql[256];
+    snprintf(sql, sizeof(sql), "SELECT COUNT(*) FROM %s;", tableName);
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(sqlite3_step(stmt) == SQLITE_ROW) {
+        count = sqlite3_column_int(stmt, 0);
+    }
+    sqlite3_finalize(stmt);
+    return count;
+}
+
 void printBoxedText(char* text)
 {
     int len = strlen(text);
@@ -77,7 +91,7 @@ void printBoxedText(char* text)
 void printUnderlinedText(char *text)
 {
     int len = strlen(text) + 2 * PADDING;
-    printf("%s\n", text);
+    fprintf(stdout, "%s\n", text);
     for (int i = 0; i < len; i++)
     {
         printf("-");

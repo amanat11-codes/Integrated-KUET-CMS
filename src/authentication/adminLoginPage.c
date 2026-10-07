@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include "adminDashboardPage.h"
 #include "utility.h"
-
+#include <string.h>
 void adminLoginPage()
 {
     while (1)
