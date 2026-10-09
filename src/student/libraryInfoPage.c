@@ -1,9 +1,9 @@
 #include <stdio.h>
+#include "utility.h"
 
 void libraryInfoPage()
 {
-    int choice;
-
+    clearScreen();
     printf("\n\t\t===== LIBRARY INFORMATION =====\n");
 
     printf("\n\tStudent Name : Toriqul Islam\n");
@@ -21,11 +21,5 @@ void libraryInfoPage()
     printf("\t2. 17-10-2026\n");
 
     printf("\n\t================================\n");
-}
-
-int main()
-{
-    libraryInfoPage();
-
-    return 0;
+    getCharacter("\nPress ENTER to return to the student dashboard...");
 }

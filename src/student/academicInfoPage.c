@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "utility.h"
 
 struct Course
 {
@@ -26,46 +27,9 @@ struct AcademicRecord
 };
 
 
-void academicInfoPage(struct AcademicRecord student)
+void academicInfoPage(void)
 {
-    printf("\n");
-    printf("                     ACADEMIC RECORDS\n");
-    printf("===============================================================\n");
-
-    printf("Student ID : %d\n", student.studentId);
-    printf("Name       : %s\n", student.name);
-    printf("Session    : %s     Year : %s     Term : %s\n",
-           student.session, student.year, student.term);
-
-    printf("---------------------------------------------------------------\n");
-
-    printf("Sl.  Course No.    Course Title                  Credit  GP  Grade\n");
-    printf("---------------------------------------------------------------\n");
-
-    for(int i = 0; i < 8; i++)
-    {
-        printf("%-4d %-13s %-35s %.2f   %.2f  %s\n",
-               i + 1,
-               student.courses[i].courseNo,
-               student.courses[i].courseTitle,
-               student.courses[i].credit,
-               student.courses[i].gradePoint,
-               student.courses[i].letterGrade);
-    }
-
-    printf("---------------------------------------------------------------\n");
-
-    printf("Credit Taken           : %.2f\n", student.creditTaken);
-    printf("Credit Completed       : %.2f\n", student.creditCompleted);
-    printf("Term GPA               : %.2f\n", student.termGPA);
-    printf("CGPA                   : %.2f\n", student.CGPA);
-
-    printf("===============================================================\n");
-}
-
-
-int main()
-{
+    clearScreen();
     struct AcademicRecord students[2] =
     {
         {
@@ -117,22 +81,54 @@ int main()
         }
     };
 
-
     int id;
 
-    printf("Enter Student ID: ");
-    scanf("%d", &id);
+    id = getInt("Enter Student ID: ");
 
     for(int i = 0; i < 2; i++)
     {
         if(students[i].studentId == id)
         {
-            academicInfoPage(students[i]);
-            return 0;
+            struct AcademicRecord student = students[i];
+
+            printf("\n");
+            printf("                     ACADEMIC RECORDS\n");
+            printf("===============================================================\n");
+
+            printf("Student ID : %d\n", student.studentId);
+            printf("Name       : %s\n", student.name);
+            printf("Session    : %s     Year : %s     Term : %s\n",
+                   student.session, student.year, student.term);
+
+            printf("---------------------------------------------------------------\n");
+
+            printf("Sl.  Course No.    Course Title                  Credit  GP  Grade\n");
+            printf("---------------------------------------------------------------\n");
+
+            for(int j = 0; j < 8; j++)
+            {
+                printf("%-4d %-13s %-35s %.2f   %.2f  %s\n",
+                       j + 1,
+                       student.courses[j].courseNo,
+                       student.courses[j].courseTitle,
+                       student.courses[j].credit,
+                       student.courses[j].gradePoint,
+                       student.courses[j].letterGrade);
+            }
+
+            printf("---------------------------------------------------------------\n");
+
+            printf("Credit Taken           : %.2f\n", student.creditTaken);
+            printf("Credit Completed       : %.2f\n", student.creditCompleted);
+            printf("Term GPA               : %.2f\n", student.termGPA);
+            printf("CGPA                   : %.2f\n", student.CGPA);
+
+            printf("===============================================================\n");
+            getCharacter("Press ENTER to return to the student dashboard...");
+            return;
         }
     }
 
     printf("Student not found.\n");
-
-    return 0;
+    getCharacter("Press ENTER to return to the student dashboard...");
 }
