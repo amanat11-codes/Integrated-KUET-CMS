@@ -1,12 +1,31 @@
 #include <stdio.h>
+
 void libraryInfoPage()
 {
-    printf("\t\tThis is library info page.\n");
+    int choice;
 
+    printf("\n\t\t===== LIBRARY INFORMATION =====\n");
 
-    // Books borrowed
-    // Issue date
-    // Return date
+    printf("\n\tStudent Name : Toriqul Islam\n");
 
-    // Toriqul
+    printf("\n\tBooks Borrowed:\n");
+    printf("\t1. Let Us C\n");
+    printf("\t2. Discrete Mathematics\n");
+
+    printf("\n\tIssue Date:\n");
+    printf("\t1. 01-10-2026\n");
+    printf("\t2. 03-10-2026\n");
+
+    printf("\n\tReturn Date:\n");
+    printf("\t1. 15-10-2026\n");
+    printf("\t2. 17-10-2026\n");
+
+    printf("\n\t================================\n");
+}
+
+int main()
+{
+    libraryInfoPage();
+
+    return 0;
 }
