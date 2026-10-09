@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "loginPage.h"
 #include "studentLoginPage.h"
 #include "teacherLoginPage.h"
@@ -6,25 +7,7 @@
 #include "noticesPage.h"
 #include "utility.h"
 
-#define CHOICE_LAST 4
-
-
-void showStudentLoginPage()
-{
-    studentLoginPage();
-}
-void showTeacherLoginPage()
-{
-    teacherLoginPage();
-}
-void showAdminLoginPage()
-{
-    adminLoginPage();
-}
-void showNoticesPage(sqlite3 *db)
-{
-    noticesPage(db);
-}
+#define CHOICE_LAST 5
 
 void loginPage(sqlite3 *db)
 {
@@ -36,6 +19,7 @@ void loginPage(sqlite3 *db)
         printf("2. Teacher Login\n");
         printf("3. Admin Login\n");
         printf("4. Show Notices\n");
+        printf("5. Quit\n");
 
         choice = getInt("> ");
 
@@ -48,21 +32,25 @@ void loginPage(sqlite3 *db)
     switch(choice)
         {
             case 1:
-                showStudentLoginPage();
+                studentLoginPage();
                 break;
 
             case 2:
-                showTeacherLoginPage();
+                teacherLoginPage();
                 break;
 
             case 3:
-                showAdminLoginPage();
+                adminLoginPage(db);
                 break;
 
             case 4:
-                showNoticesPage(db);
+                noticesPage(db);
                 break;
 
+            case 5:
+                printf("Exiting...\n");
+                sqlite3_close(db);
+                exit(0);
             default:
                 printf("Invalid choice!\n");
         }

@@ -1,3 +1,6 @@
+#ifndef UTILITY_H
+#define UTILITY_H
+
 #include "sqlite3.h"
 
 int getInt(char* prompt);
@@ -9,3 +12,5 @@ void printUnderlinedText(char *text);
 void clearScreen();
 
 // function prototype
+
+#endif

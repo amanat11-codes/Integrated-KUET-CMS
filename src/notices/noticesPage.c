@@ -23,14 +23,31 @@ void displayNoticeListItem(int serial, char* date, char* title, char* intro)
     printf("\n");
 }
 
-void showNoticeDetails(Notice n)
+void showNoticeDetails(sqlite3 *db, int id)
 {
     clearScreen();
-    
-    printf("\n==================== NOTICE ====================\n");
-    printf("%s\n%s\n%s\n", n.date, n.title, n.details);
-    printf("================================================\n");
-    getCharacter("Press ENTER to go back...");
+
+    char *sql = "SELECT * FROM notices WHERE notice_id = ?;";
+    sqlite3_stmt *stmt;
+
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+
+    sqlite3_bind_int(stmt, 1, id);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        printf("\n==================== NOTICE ====================\n");
+        printf("%s\n%s\n\n%s\n", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4));
+        printf("================================================\n");
+        getCharacter("Press ENTER to go back...");
+    } else
+    {
+        printf("\n==================== NOTICE ====================\n");
+        printf("Notice not found\n");
+        getCharacter("Press ENTER to go back...");
+        printf("================================================\n");
+    }
+
     clearScreen();
 }
 
@@ -42,7 +59,7 @@ void fetchAllNotices(sqlite3 *db, Notice *notices)
     int i = 0;
     while (sqlite3_step(stmt) == SQLITE_ROW)
     {
-        notices[i].slNo = sqlite3_column_int(stmt, 0);
+        notices[i].id = sqlite3_column_int(stmt, 0);
         if ((char*)sqlite3_column_text(stmt, 1) != NULL)
             strcpy(notices[i].date, (char*)sqlite3_column_text(stmt, 1));
         else
@@ -68,9 +85,9 @@ void fetchAllNotices(sqlite3 *db, Notice *notices)
 void displayNoticeList(Notice *notices, int count)
 {
     printf("%s\t%s\t\t%s\t\t%s\n", "ID", "Date", "Title", "Description");
-    printf("-------------------------------------------------------------------------------------\n");
+    printf("---------------------------------------------------------\n");
     for (register int i = 0; i < count; i++)
-        displayNoticeListItem(notices[i].slNo, notices[i].date, notices[i].title, notices[i].intro);
+        displayNoticeListItem(notices[i].id, notices[i].date, notices[i].title, notices[i].intro);
 }
 
 int noticeExists(sqlite3 *db, int noticeId)
@@ -110,6 +127,12 @@ void noticesPage(sqlite3 *db)
         printf("\n");
         printf("\nEnter notice ID to open a notice (0 to go back)\n");
         choice = getInt("> ");
+        
+        if (choice == 0)
+        {
+            free(notices);
+            return;
+        }
 
         while(!noticeExists(db, choice))
         {
@@ -117,12 +140,6 @@ void noticesPage(sqlite3 *db)
             choice = getInt("> ");
         }
 
-        if (choice == 0)
-        {
-            free(notices);
-            return;
-        }
-
-        showNoticeDetails(notices[choice - 1]);
+        showNoticeDetails(db, choice);
     }
 }

@@ -20,7 +20,43 @@ char* createIntro(char* details)
 
 }
 
-void addNotice()
+void insertNoticeToDatabase(sqlite3 *db, Notice *notice)
+{
+    const char *sql =
+        "INSERT INTO notices (date, title, intro, details) "
+        "VALUES (?, ?, ?, ?);";
+    sqlite3_stmt *stmt = NULL;
+    int result;
+
+    result = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (result != SQLITE_OK)
+    {
+        fprintf(stderr, "Failed to prepare notice insert: %s\n",
+                sqlite3_errmsg(db));
+        return;
+    }
+
+    result = sqlite3_bind_text(stmt, 1, notice->date, -1, SQLITE_TRANSIENT);
+    if (result == SQLITE_OK)
+        result = sqlite3_bind_text(stmt, 2, notice->title, -1, SQLITE_TRANSIENT);
+    if (result == SQLITE_OK)
+        result = sqlite3_bind_text(stmt, 3, notice->intro, -1, SQLITE_TRANSIENT);
+    if (result == SQLITE_OK)
+        result = sqlite3_bind_text(stmt, 4, notice->details, -1, SQLITE_TRANSIENT);
+
+    if (result == SQLITE_OK)
+        result = sqlite3_step(stmt);
+
+    if (result == SQLITE_DONE)
+        printf("Notice added successfully.\n");
+    else
+        fprintf(stderr, "Failed to add notice: %s\n",
+                sqlite3_errmsg(db));
+    
+    sqlite3_finalize(stmt);
+}
+
+void addNotice(sqlite3 *db)
 {
     clearScreen();
     printUnderlinedText("Add a Notice");
@@ -37,9 +73,6 @@ void addNotice()
 
         strcpy(notice.intro, createIntro(notice.details));
 
-        printf("Title: %s\n", notice.title);
-        printf("Date: %s\n", notice.date);
-        printf("Intro: %s\n", notice.intro);
-        printf("Body: %s\n", notice.details);
+        insertNoticeToDatabase(db, &notice);
     }
 }

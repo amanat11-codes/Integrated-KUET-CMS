@@ -1,12 +1,12 @@
 #include<stdio.h>
-#include "adminDashboardPage.h"
-#include "utility.h"
 #include <string.h>
-void adminLoginPage()
+#include "utility.h"
+#include "adminDashboardPage.h"
+#include "adminLoginPage.h"
+void adminLoginPage(sqlite3 *db)
 {
     while (1)
     {
-
         clearScreen();
 
         char ID[8];
@@ -27,6 +27,6 @@ void adminLoginPage()
         }
     }
     
-    adminDashboard();
+    adminDashboard(db);
 
 }
