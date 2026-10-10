@@ -1,4 +1,6 @@
+
 #include <stdio.h>
+
 #include "loginPage.h"
 #include "studentLoginPage.h"
 #include "teacherLoginPage.h"
@@ -8,20 +10,22 @@
 
 #define CHOICE_LAST 4
 
-
-void showStudentLoginPage()
+void showStudentLoginPage(void)
 {
     studentLoginPage();
 }
-void showTeacherLoginPage()
+
+void showTeacherLoginPage(void)
 {
     teacherLoginPage();
 }
-void showAdminLoginPage()
+
+void showAdminLoginPage(void)
 {
     adminLoginPage();
 }
-void showNoticesPage()
+
+void showNoticesPage(void)
 {
     noticesPage();
 }
@@ -30,6 +34,7 @@ void loginPage(void)
 {
     int choice;
 
+    printf("\n========== KUET CMS ==========\n");
     printf("1. Student Login\n");
     printf("2. Teacher Login\n");
     printf("3. Admin Login\n");
@@ -37,13 +42,14 @@ void loginPage(void)
 
     choice = getInt("Please choose an option: ");
 
-    while (!(choice >= 1 && choice <= CHOICE_LAST))
+    while (choice < 1 || choice > CHOICE_LAST)
     {
-        printf("Please input a valid option, between 1 and %d\n", CHOICE_LAST);
+        printf("Please input a valid option, between 1 and %d\n",
+               CHOICE_LAST);
         choice = getInt("Please choose an option: ");
     }
 
-   /*switch(choice)
+    switch (choice)
     {
         case 1:
             showStudentLoginPage();
@@ -63,5 +69,6 @@ void loginPage(void)
 
         default:
             printf("Invalid choice!\n");
-    }*/
+    }
 }
+
