@@ -8,6 +8,9 @@
 #include "libraryInfoPage.h"
 #include "academicInfoPage.h"
 #include "teacherProfilePage.h"
+#include "utility.h"
+
+#define LAST_CHOICE 6
 
 static void openHallDetailsWindow(const char *student_id)
 {

@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-
+#include <stdlib.h>
 #include "loginPage.h"
 #include "studentLoginPage.h"
 #include "teacherLoginPage.h"
@@ -8,39 +8,22 @@
 #include "noticesPage.h"
 #include "utility.h"
 
-#define CHOICE_LAST 4
+#define CHOICE_LAST 5
 
-void showStudentLoginPage(void)
-{
-    studentLoginPage();
-}
-
-void showTeacherLoginPage(void)
-{
-    teacherLoginPage();
-}
-
-void showAdminLoginPage(void)
-{
-    adminLoginPage();
-}
-
-void showNoticesPage(void)
-{
-    noticesPage();
-}
-
-void loginPage(void)
+void loginPage(sqlite3 *db)
 {
     int choice;
-
+    while (1)
+    {
+        clearScreen();
     printf("\n========== KUET CMS ==========\n");
-    printf("1. Student Login\n");
-    printf("2. Teacher Login\n");
-    printf("3. Admin Login\n");
-    printf("4. Show Notices\n");
+        printf("1. Student Login\n");
+        printf("2. Teacher Login\n");
+        printf("3. Admin Login\n");
+        printf("4. Show Notices\n");
+        printf("5. Quit\n");
 
-    choice = getInt("Please choose an option: ");
+        choice = getInt("> ");
 
     while (choice < 1 || choice > CHOICE_LAST)
     {
@@ -49,26 +32,31 @@ void loginPage(void)
         choice = getInt("Please choose an option: ");
     }
 
-    switch (choice)
-    {
-        case 1:
-            showStudentLoginPage();
-            break;
+    switch(choice)
+        {
+            case 1:
+                studentLoginPage();
+                break;
 
-        case 2:
-            showTeacherLoginPage();
-            break;
+            case 2:
+                teacherLoginPage();
+                break;
 
-        case 3:
-            showAdminLoginPage();
-            break;
+            case 3:
+                adminLoginPage(db);
+                break;
 
-        case 4:
-            showNoticesPage();
-            break;
+            case 4:
+                noticesPage(db);
+                break;
 
-        default:
-            printf("Invalid choice!\n");
+            case 5:
+                printf("Exiting...\n");
+                sqlite3_close(db);
+                exit(0);
+            default:
+                printf("Invalid choice!\n");
+        }
     }
 }
 

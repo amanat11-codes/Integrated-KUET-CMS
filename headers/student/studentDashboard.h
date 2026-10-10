@@ -1,15 +1,11 @@
-
-
 #ifndef STUDENT_DASHBOARD_H
 #define STUDENT_DASHBOARD_H
 
-void studentDashboard(const char *student_id);
-
-void showStudentProfilePage(void);
-void showHallDetailsPage(void);
-void showAcademicInfoPage(void);
-void showLibraryInfoPage(void);
-void showTeacherInfoPage(void);
+void showStudentProfilePage();
+void showHallDetailsPage();
+void showAcademicInfoPage();
+void showLibraryInfoPage();
+void showTeacherInfoPage();
+void studentDashboard();
 
 #endif
-

@@ -25,6 +25,10 @@ LDFLAGS  :=
 ## src/ folder (and its .h in the matching headers/ folder) later --
 ## no need to edit this Makefile. Add another wildcard line below if you
 ## ever nest folders deeper than src/<feature>/<file>.c.
+
+
+
+
 SRCS     := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c) $(wildcard $(SRC_DIR)/*/*/*.c)
 OBJS     := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
 DEPS     := $(OBJS:.o=.d)
