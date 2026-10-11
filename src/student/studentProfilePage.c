@@ -4,7 +4,8 @@
 void studentProfilePage()
 {
     clearScreen();
-    printBoxedText("Student Profile Page yet to be implemented");
+    printBoxedText("STUDENT PROFILE PAGE");
+    printf("Student profile page yet to be implemented\n");
     getCharacter("Press ENTER to return to the student dashboard...");
     // Nayeem
 }

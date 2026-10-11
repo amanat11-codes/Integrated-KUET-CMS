@@ -287,6 +287,8 @@ void hallDetailsPage(sqlite3 *db, const char *student_id)
 
     */
     clearScreen();
-    printBoxedText("Hall Details Page yet to be implemented");
+    printBoxedText("HALL DETAILS PAGE");
+    printf("Hall Details Page yet to be implemented\n");
+
     getCharacter("Press ENTER to return to the student dashboard...");
 }
