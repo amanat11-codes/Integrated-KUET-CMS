@@ -7,12 +7,14 @@ sqlite3* createDatabase()
 
     if (result != SQLITE_OK)
     {
-        printf("Cannot open database: %s\n", sqlite3_errmsg(db));
+        // error opening db
         sqlite3_close(db);
         exit(1);
     }
 
-    printf("Database created successfully.\n");
+    // successfully opened db
+
+    
 
     return db;
 }

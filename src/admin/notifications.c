@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include "notifications.h"
+#include "utility.h"
 void viewNotifications()
 {
-    printf("\t\tYou can add notice here\n");
-    // Title
-    // Date
-    // Body
+    clearScreen();
+    printBoxedText("NOTIFICATIONS");
+    printf("Notifications yet to be implemented\n");
+    getCharacter("Press ENTER to return to the main menu...");
 
     // Nayeem
 }

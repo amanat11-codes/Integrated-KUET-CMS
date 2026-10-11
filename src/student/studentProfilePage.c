@@ -1,21 +1,10 @@
 #include <stdio.h>
+#include "utility.h"
+
 void studentProfilePage()
 {
-    printf("\t\tThis is student Profile\n");
-
-    // Name
-    // Father's name
-    // Mother's name
-    // KUET Email
-    // Phone
-    // Gender
-    // Address
-    // Religion
-    // Blood Group
-    // Scholarship ?
-    // Advisor
-
-    // Update Information
-
+    clearScreen();
+    printBoxedText("Student Profile Page yet to be implemented");
+    getCharacter("Press ENTER to return to the student dashboard...");
     // Nayeem
 }

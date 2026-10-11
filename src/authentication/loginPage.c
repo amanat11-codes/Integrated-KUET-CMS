@@ -16,7 +16,7 @@ void loginPage(sqlite3 *db)
     while (1)
     {
         clearScreen();
-    printf("\n========== KUET CMS ==========\n");
+        printBoxedText("Integrated KUET CMS");
         printf("1. Student Login\n");
         printf("2. Teacher Login\n");
         printf("3. Admin Login\n");
@@ -25,38 +25,38 @@ void loginPage(sqlite3 *db)
 
         choice = getInt("> ");
 
-    while (choice < 1 || choice > CHOICE_LAST)
-    {
-        printf("Please input a valid option, between 1 and %d\n",
-               CHOICE_LAST);
-        choice = getInt("Please choose an option: ");
-    }
-
-    switch(choice)
+        while (choice < 1 || choice > CHOICE_LAST)
         {
-            case 1:
-                studentLoginPage();
-                break;
-
-            case 2:
-                teacherLoginPage();
-                break;
-
-            case 3:
-                adminLoginPage(db);
-                break;
-
-            case 4:
-                noticesPage(db);
-                break;
-
-            case 5:
-                printf("Exiting...\n");
-                sqlite3_close(db);
-                exit(0);
-            default:
-                printf("Invalid choice!\n");
+            printf("Please input a valid option, between 1 and %d\n",
+                CHOICE_LAST);
+            choice = getInt("Please choose an option: ");
         }
-    }
+
+        switch(choice)
+            {
+                case 1:
+                    studentLoginPage(db);
+                    break;
+
+                case 2:
+                    teacherLoginPage();
+                    break;
+
+                case 3:
+                    adminLoginPage(db);
+                    break;
+
+                case 4:
+                    noticesPage(db);
+                    break;
+
+                case 5:
+                    printf("Exiting...\n");
+                    sqlite3_close(db);
+                    exit(0);
+                default:
+                    printf("Invalid choice!\n");
+            }
+        }
 }
 

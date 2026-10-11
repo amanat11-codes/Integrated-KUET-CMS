@@ -1,90 +1,35 @@
-
 #include <stdio.h>
-#include <windows.h>
-#include <string.h>
-
+#include <stdlib.h>
+#include "studentDashboard.h"
 #include "studentProfilePage.h"
+#include "academicInfoPage.h"
 #include "hallDetailsPage.h"
 #include "libraryInfoPage.h"
-#include "academicInfoPage.h"
 #include "teacherProfilePage.h"
 #include "utility.h"
 
 #define LAST_CHOICE 6
 
-static void openHallDetailsWindow(const char *student_id)
+void studentDashboard(sqlite3 *db, char *student_id)
 {
-    char exePath[MAX_PATH];
-    char commandLine[MAX_PATH + 300];
-
-    STARTUPINFOA si = {0};
-    PROCESS_INFORMATION pi = {0};
-
-    si.cb = sizeof(si);
-
-    DWORD len = GetModuleFileNameA(
-        NULL, exePath, MAX_PATH
-    );
-
-    if (len == 0 || len >= MAX_PATH)
-    {
-        printf("Cannot locate the application.\n");
-        return;
-    }
-
-    snprintf(
-        commandLine,
-        sizeof(commandLine),
-        "\"%s\" --hall-details \"%s\"",
-        exePath,
-        student_id
-    );
-
-    if (!CreateProcessA(
-            exePath, commandLine,
-            NULL, NULL, FALSE,
-            CREATE_NEW_CONSOLE,
-            NULL, NULL, &si, &pi))
-    {
-        printf("Cannot open Hall Details Window. Error: %lu\n",
-               GetLastError());
-        return;
-    }
-
-    CloseHandle(pi.hThread);
-    CloseHandle(pi.hProcess);
-}
-
-void studentDashboard(const char *student_id)
-{
-    int choice;
+    (void)db;
+    (void)student_id;
 
     while (1)
     {
-        printf("\n\n");
-        printf("\t====================================\n");
-        printf("\t        KUET STUDENT DASHBOARD\n");
-        printf("\t====================================\n");
+        clearScreen();
+        printBoxedText("STUDENT DASHBOARD PANEL");
+        printf("1. Student Profile\n");
+        printf("2. Academic Information\n");
+        printf("3. Hall Details\n");
+        printf("4. Library Information\n");
+        printf("5. Teacher Information\n");
+        printf("6. Quit\n");
 
-        printf("\t1. Student Profile\n");
-        printf("\t2. Academic Information\n");
-        printf("\t3. Hall Details\n");
-        printf("\t4. Library Information\n");
-        printf("\t5. Teacher Information\n");
-        printf("\t6. Logout\n");
-
-        printf("\n\tEnter your choice: ");
-
-        if (scanf("%d", &choice) != 1)
+        int choice;
+        while ((choice = getInt("> ")) < 1 || choice > LAST_CHOICE)
         {
-            int ch;
-
-            while ((ch = getchar()) != '\n' && ch != EOF)
-            {
-            }
-
-            printf("\n\tInvalid input! Enter a number.\n");
-            continue;
+            printf("Invalid choice. Please try again.\n");
         }
 
         switch (choice)
@@ -92,29 +37,22 @@ void studentDashboard(const char *student_id)
             case 1:
                 studentProfilePage();
                 break;
-
             case 2:
-                academicInfoPage();
+                academicInfoPage(db, student_id);
                 break;
-
             case 3:
-    openHallDetailsWindow(student_id);
-    break;
-
-            case 4:
-                libraryInfoPage();
+                hallDetailsPage(db, student_id);
                 break;
-
+            case 4:
+                libraryInfoPage(db, student_id);
+                break;
             case 5:
                 teacherProfilePage();
                 break;
-
             case 6:
-                printf("\n\tLogging out...\n");
-                return;
-
-            default:
-                printf("\n\tInvalid choice!\n");
+                printf("Exiting...\n");
+                sqlite3_close(db);
+                exit(0);
         }
     }
 }

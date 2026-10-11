@@ -1,13 +1,11 @@
-
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <sqlite3.h>
+#include "hallDetailsPage.h"
+#include "utility.h"
 
-#include "../../headers/student/hallDetailsPage.h"
-
-#define DB_NAME "database/kuet_cms.db"
-
+#if 0
 static int validDate(const char *input, char *isoDate)
 {
     int day, month, year;
@@ -210,9 +208,11 @@ static void viewMealOffPeriods(const char *student_id)
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 }
+#endif
 
-void hallDetailsPage(const char *student_id)
+void hallDetailsPage(sqlite3 *db, const char *student_id)
 {
+    /*
     int choice;
 
     while (1)
@@ -284,5 +284,9 @@ void hallDetailsPage(const char *student_id)
                 printf("\nInvalid choice!\n");
         }
     }
-}
 
+    */
+    clearScreen();
+    printBoxedText("Hall Details Page yet to be implemented");
+    getCharacter("Press ENTER to return to the student dashboard...");
+}

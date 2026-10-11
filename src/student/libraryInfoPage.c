@@ -1,9 +1,16 @@
 #include <stdio.h>
 #include "utility.h"
-
-void libraryInfoPage()
+#include "libraryInfoPage.h"
+#include "sqlite3.h"
+void libraryInfoPage(sqlite3 *db, char *student_id)
 {
     clearScreen();
+
+    printBoxedText("LIBRARY INFORMATION");
+    printf("Library Information Page yet to be implemented\n");
+    getCharacter("Press ENTER to continue...");
+
+    /*
     printf("\n\t\t===== LIBRARY INFORMATION =====\n");
 
     printf("\n\tStudent Name : Toriqul Islam\n");
@@ -22,4 +29,6 @@ void libraryInfoPage()
 
     printf("\n\t================================\n");
     getCharacter("\nPress ENTER to return to the student dashboard...");
+    */
+    
 }

@@ -120,7 +120,34 @@ flowchart TD
 The [`makefile`](makefile) uses GCC, C11, warnings, debug symbols, automatic
 header dependencies, and OS-aware cleanup commands.
 
-## 6. Current implementation status
+## 6. Code analysis
+
+Metrics below cover project-authored C, header, and SQL files. The vendored
+SQLite implementation is excluded from both `src/utility/sqlite3.c` and
+`headers/utility/sqlite3.h`.
+
+| Area | Files | Total lines | Non-blank lines |
+|---|---:|---:|---:|
+| C source | 20 | 918 | 771 |
+| Header files | 19 | 167 | 119 |
+| Database SQL | 2 | 80 | 70 |
+| **Total** | **41** | **1,165** | **960** |
+
+Additional observations:
+
+- `src/` contains the complete application implementation: 20 C files and
+  918 total lines.
+- `headers/` contains 19 project headers and 167 total lines.
+- `database/` contains the schema and seed scripts with 80 total lines.
+- `src/main.c` is currently the only application `main()` entry point.
+- The largest C modules are `src/notices/noticesPage.c` (145 lines),
+  `src/student/academicInfoPage.c` (134 lines),
+  `src/utility/utility.c` (108 lines), and
+  `src/admin/removeNoticePage.c` (95 lines).
+- The codebase is mostly feature-oriented, but several pages still use static
+  sample data or placeholder output instead of persistent records.
+
+## 7. Current implementation status
 
 ### Working or substantially implemented
 
@@ -143,7 +170,7 @@ header dependencies, and OS-aware cleanup commands.
 - `clearScreen()` is Windows-specific (`cls`) despite the makefile supporting
   non-Windows builds.
 
-## 7. Suggested next implementation order
+## 8. Suggested next implementation order
 
 1. Add user, student, teacher, course, marks, and hall/library tables.
 2. Replace placeholder login pages with database-backed authentication.
