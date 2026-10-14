@@ -109,29 +109,29 @@ void printMenuItems(int count, ...)
     va_end(args);
 }
 
-LoginStatus credentialsValidation(char *id, const char *password, int idMaxLength, int passMaxLength, UserType userType)
+LoginStatus credentialsValidation(const char *id, const char *password, UserType usertype, int idMaxLength, int passMaxLength, FILE *credentialsFile)
 {
-    LoginStatus status = SUCCESS; // default to SUCCESS
-
+    
     if ((int)strlen(id) != idMaxLength || (int)strlen(password) != passMaxLength)
+        return INVALID_CREDENTIALS;
+
+    User user;
+    int credentialsMatch = 0;
+
+    rewind(credentialsFile);
+    while (fread(&user, sizeof(User), 1, credentialsFile) == 1)
     {
-        status = INVALID_CREDENTIALS;
-        return status;
+        if (strcmp(user.id, id) == 0 && strcmp(user.pass, password) == 0 && user.type == usertype)
+        {
+            credentialsMatch = 1;
+            break;
+        }
     }
 
-    char filepath[256];
-    getFilePathForUserType(id, userType, filepath);
-    FILE *file = fopen(filepath, "r");
-    if (file == NULL)
-    {
-        fclose(file);
-        status = RECORD_NOT_FOUND;
-        return status;
-    }
+    if (!credentialsMatch)
+        return INVALID_CREDENTIALS;
 
-    fclose(file);
-
-    return status;
+    return SUCCESS;
 }
 
 void getFilePathForUserType(char *id, UserType userType, char *filepath)
@@ -158,6 +158,8 @@ void showDate(Date date, char *dateString)
     snprintf(dateString, 11, "%d-%d-%d", date.day, date.month, date.year);
     dateString[10] = '\0';
 }
+
+
 
 void clearScreen()
 {

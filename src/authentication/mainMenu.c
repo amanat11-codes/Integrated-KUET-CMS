@@ -50,13 +50,10 @@ void mainMenu()
             loginPortal();
             break;
         case 2:
-            teacherLoginPage();
+            // registrationPortal();
             break;
         case 3:
-            adminLoginPage();
-            break;
-        case 4:
-          //  noticesPage();
+            // noticeBoard();
             break;
         default:
             printf("Exiting...\n");

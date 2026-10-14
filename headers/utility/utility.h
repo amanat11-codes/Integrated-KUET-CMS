@@ -1,12 +1,22 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include <stdio.h>
+
 typedef enum
 {
     TEACHER = 1,
     STUDENT = 2,
     ADMIN = 3
 } UserType;
+typedef struct {
+    char id[9];
+    char pass[9];
+    UserType type; // 1 for teacher, 2 for student, 3 for admin
+} User;
+
+
+
 
 typedef enum
 {
@@ -27,10 +37,11 @@ char getCharacter(char *prompt);
 void printBoxedText(char* text);
 void printUnderlinedText(char *text);
 void printMenuItems(int count, ...);
-void clearScreen();
-LoginStatus credentialsValidation(char *id, const char *password, int idMaxLength, int passMaxLength, UserType userType);
+LoginStatus credentialsValidation(const char *id, const char *password, UserType usertype, int idMaxLength, int passMaxLength, FILE *credentialsFile);
 void getFilePathForUserType(char *id, UserType userType, char *filepath);
 void showDate(Date date, char *dateString);
+void clearScreen();
+
 
 
 #endif
