@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <sqlite3.h>
 #include "hallDetailsPage.h"
 #include "utility.h"
+#include "studentDashboard.h"
 
 #if 0
 static int validDate(const char *input, char *isoDate)
@@ -210,85 +210,46 @@ static void viewMealOffPeriods(const char *student_id)
 }
 #endif
 
-void hallDetailsPage(sqlite3 *db, const char *student_id)
+void showHallDetails(HallDetails *record, const char *student_id)
 {
-    /*
-    int choice;
+    char nextFeastDate[11];
+    showDate(record->nextMonthlyFeast, nextFeastDate);
+    printf("Student ID             %s\n", student_id);
+    printf("Hall Name              %s\n", record->hallName);
+    printf("Meal Status            %d\n", record->mealStatus);
+    printf("Boarder                %d\t\tSide:     %s\n", record->boarderNumber, record->hallSide);
+    printf("Next Monthly Feast     %s\n", nextFeastDate);
+}
 
-    while (1)
-    {
-        printf("\n");
-        printf("\t========================================\n");
-        printf("\t          KUET HALL DETAILS\n");
-        printf("\t========================================\n");
-
-        printf("\t1. Hall Name\n");
-        printf("\t2. Meal Status\n");
-        printf("\t3. Boarder Information\n");
-        printf("\t4. Hall Side\n");
-        printf("\t5. Monthly Feast Date\n");
-        printf("\t6. Set Meal Off Period\n");
-        printf("\t7. View Meal Off Periods\n");
-        printf("\t8. Back\n");
-
-        printf("\n\tEnter your choice: ");
-
-        if (scanf("%d", &choice) != 1)
-        {
-            int ch;
-
-            while ((ch = getchar()) != '\n' && ch != EOF)
-            {
-            }
-
-            printf("\nInvalid input! Enter a number.\n");
-            continue;
-        }
-
-        switch (choice)
-        {
-            case 1:
-                printf("\nHall Name: Amar Ekushey Hall\n");
-                break;
-
-            case 2:
-                printf("\nMeal Status: ON\n");
-                break;
-
-            case 3:
-                printf("\nBoarder Status: Boarder\n");
-                break;
-
-            case 4:
-                printf("\nHall Side: East\n");
-                break;
-
-            case 5:
-                printf("\nUpcoming Monthly Feast Date: "
-                       "15 October 2026\n");
-                break;
-
-            case 6:
-                setMealOffPeriod(student_id);
-                break;
-
-            case 7:
-                viewMealOffPeriods(student_id);
-                break;
-
-            case 8:
-                printf("\nReturning...\n");
-                return;
-
-            default:
-                printf("\nInvalid choice!\n");
-        }
-    }
-
-    */
+void hallDetailsPage(const char *student_id, const char *filepath)
+{
     clearScreen();
     printBoxedText("HALL DETAILS PAGE");
-    printf("Hall Details Page yet to be implemented\n");
 
+    FILE *fp = fopen(filepath, "rb");
+    if (fp == NULL)
+    {
+        printf("Error opening file: %s\n", filepath);
+        getCharacter("Press ENTER to return to the student dashboard...");
+        return;
+    }
+
+    HallDetails record;
+    StudentFileHeader header;
+
+    fread(&header, sizeof(StudentFileHeader), 1, fp);
+    fseek(fp, header.hallDetailsOffset, SEEK_SET);
+
+    if (fread(&record, sizeof(HallDetails), 1, fp) != 1)
+    {
+        printf("Error reading file: %s\n", filepath);
+        fclose(fp);
+        getCharacter("Press ENTER to return to the student dashboard...");
+        return;
+    }
+    fclose(fp);
+
+    showHallDetails(&record, student_id);
     getCharacter("Press ENTER to return to the student dashboard...");
+
 }

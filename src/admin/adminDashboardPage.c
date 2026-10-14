@@ -5,21 +5,17 @@
 #include "adminDashboardPage.h"
 #include "removeNoticePage.h"
 #include "utility.h"
-#include "sqlite3.h"
 
 #define LAST_CHOICE 5
 
-void adminDashboard(sqlite3 *db)
+void adminDashboard()
 {
     while (1)
     {    
         clearScreen();
         printBoxedText("ADMIN DASHBOARD PANEL");
-        printf("1. Add notice\n");
-        printf("2. Remove notice\n");
-        printf("3. View notices\n");
-        printf("4. View notifications\n");
-        printf("5. Quit\n");
+        printMenuItems(LAST_CHOICE, "Add notice", "Remove notice", "View notices", "View notifications");
+        printf("0. Quit\n");
 
         int choice;
         while ( (choice = getInt("> ")) < 1 || choice > LAST_CHOICE)
@@ -30,21 +26,20 @@ void adminDashboard(sqlite3 *db)
         switch(choice)
         {
             case 1:
-                addNotice(db);
+                addNotice();
                 break;
             case 2:
-                removeNoticePage(db);
+                removeNoticePage();
                 break;
             case 3:
-                noticesPage(db);
+                noticesPage();
                 break;
             case 4:
                 viewNotifications();
                 break;
-            case 5:
-                printf("Quitting...\n");
-                sqlite3_close(db);
-                exit(0);
+            default:
+                getCharacter("Press ENTER to go back...\n");
+                return;
         }
     }
 }

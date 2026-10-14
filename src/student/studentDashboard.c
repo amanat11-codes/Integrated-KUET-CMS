@@ -8,51 +8,55 @@
 #include "teacherProfilePage.h"
 #include "utility.h"
 
-#define LAST_CHOICE 6
+#define STUDENT_DASHBOARD_LAST_CHOICE 5
 
-void studentDashboard(sqlite3 *db, char *student_id)
+
+
+
+
+void studentDashboard(const char *student_id, const char *filepath)
 {
-    (void)db;
-    (void)student_id;
-
     while (1)
     {
         clearScreen();
         printBoxedText("STUDENT DASHBOARD PANEL");
-        printf("1. Student Profile\n");
-        printf("2. Academic Information\n");
-        printf("3. Hall Details\n");
-        printf("4. Library Information\n");
-        printf("5. Teacher Information\n");
-        printf("6. Quit\n");
+        printMenuItems(STUDENT_DASHBOARD_LAST_CHOICE, "Student Profile", "Academic Information", "Hall Details", "Library Information", "Teacher Information");
+        printf("0. Quit\n");
 
-        int choice;
-        while ((choice = getInt("> ")) < 1 || choice > LAST_CHOICE)
+        int choice = getInt("> ");
+
+        while (choice < 0 || choice > STUDENT_DASHBOARD_LAST_CHOICE)
         {
-            printf("Invalid choice. Please try again.\n");
+            printf("Please input a valid option...\n");
+            choice = getInt("> ");
+
+            if (choice == 0)
+                return;
         }
+
+        if (choice == 0)
+            return;
 
         switch (choice)
         {
             case 1:
-                studentProfilePage();
+                studentProfilePage(student_id, filepath); // prepare db
                 break;
             case 2:
-                academicInfoPage(db, student_id);
+                academicInfoPage(student_id, filepath);
                 break;
             case 3:
-                hallDetailsPage(db, student_id);
+                hallDetailsPage(student_id, filepath);
                 break;
             case 4:
-                libraryInfoPage(db, student_id);
+                libraryInfoPage(student_id, filepath); // prepare db
                 break;
             case 5:
-                teacherProfilePage();
+                //teacherProfilePage();
                 break;
-            case 6:
-                printf("Exiting...\n");
-                sqlite3_close(db);
-                exit(0);
+            default:
+                getCharacter("Press ENTER to go back...\n");
+                return;
         }
     }
 }
