@@ -2,34 +2,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sqlite3.h"
+#include <stdarg.h>
 
 const int PADDING = 2;
 
-int getInt(char* prompt)
+
+
+int getInt(char *prompt)
 {
     int value;
     printf("%s", prompt);
 
-    while (scanf("%d", &value) != 1){
+    while (scanf("%d", &value) != 1)
+    {
         printf("Invalid input. Please enter an integer: ");
-        while (getchar() != '\n'); // Clear the input buffer
+        while (getchar() != '\n')
+            ; // Clear the input buffer
     }
 
-    while (getchar() != '\n'); // Clear the newline before the next line-based input
+    while (getchar() != '\n')
+        ; // Clear the newline before the next line-based input
     return value;
 }
 
-void getString(char* prompt, int maxLength, char* dest)
+void getString(char *prompt, int maxLength, char *dest)
 {
     char buffer[maxLength];
     printf("%s", prompt);
-    while (fgets(buffer, maxLength, stdin) == NULL){
+    while (fgets(buffer, maxLength, stdin) == NULL)
+    {
         printf("\nInvalid input. Please enter a string: ");
     }
 
-    if (strchr(buffer, '\n') == NULL) {
-        while (getchar() != '\n' && !feof(stdin));
+    if (strchr(buffer, '\n') == NULL)
+    {
+        while (getchar() != '\n' && !feof(stdin))
+            ;
     }
 
     buffer[strcspn(buffer, "\n")] = '\0'; // Remove the newline character
@@ -45,27 +53,15 @@ char getCharacter(char *prompt)
     return ch;
 }
 
-int getTableRows(sqlite3 *db, const char *tableName)
-{
-    int count = 0;
-    char sql[256];
-    snprintf(sql, sizeof(sql), "SELECT COUNT(*) FROM %s;", tableName);
-    sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-    if(sqlite3_step(stmt) == SQLITE_ROW) {
-        count = sqlite3_column_int(stmt, 0);
-    }
-    sqlite3_finalize(stmt);
-    return count;
-}
 
-void printBoxedText(char* text)
+void printBoxedText(char *text)
 {
     int len = strlen(text);
     int lenX = len + 2 * PADDING + 1; // Add padding for the sides
 
     printf(".");
-    for (int i = 0; i < lenX - 1; i++){
+    for (int i = 0; i < lenX - 1; i++)
+    {
         printf("-");
     }
     printf(".\n");
@@ -82,7 +78,8 @@ void printBoxedText(char* text)
     }
     printf("|\n");
     printf(".");
-    for (int i = 0; i < lenX - 1; i++){
+    for (int i = 0; i < lenX - 1; i++)
+    {
         printf("-");
     }
     printf(".\n");
@@ -98,6 +95,70 @@ void printUnderlinedText(char *text)
     }
     printf("\n");
 }
+
+void printMenuItems(int count, ...)
+{
+    va_list args;
+    va_start(args, count);
+
+    for (int i = 0; i < count; i++)
+    {
+        char *item = va_arg(args, char *);
+        printf("%d. %s\n", i + 1, item);
+    }
+    va_end(args);
+}
+
+LoginStatus credentialsValidation(const char *id, const char *password, UserType usertype, int idMaxLength, int passMaxLength, FILE *credentialsFile)
+{
+    
+    if ((int)strlen(id) != idMaxLength || (int)strlen(password) != passMaxLength)
+        return INVALID_CREDENTIALS;
+
+    User user;
+    int credentialsMatch = 0;
+
+    rewind(credentialsFile);
+    while (fread(&user, sizeof(User), 1, credentialsFile) == 1)
+    {
+        if (strcmp(user.id, id) == 0 && strcmp(user.pass, password) == 0 && user.type == usertype)
+        {
+            credentialsMatch = 1;
+            break;
+        }
+    }
+
+    if (!credentialsMatch)
+        return INVALID_CREDENTIALS;
+
+    return SUCCESS;
+}
+
+void getFilePathForUserType(char *id, UserType userType, char *filepath)
+{
+    switch (userType)
+    {
+    case TEACHER:
+        snprintf(filepath, 256, "database/teachers/%s.teacher", id);
+        break;
+    case STUDENT:
+        snprintf(filepath, 256, "database/students/%s.student", id);
+        break;
+    case ADMIN:
+        snprintf(filepath, 256, "database/admins/%s.admin", id);
+        break;
+    default:
+        filepath[0] = '\0';
+        return;
+    }
+}
+
+void showDate(Date date, char *dateString)
+{
+    snprintf(dateString, 11, "%d-%d-%d", date.day, date.month, date.year);
+    dateString[10] = '\0';
+}
+
 
 
 void clearScreen()

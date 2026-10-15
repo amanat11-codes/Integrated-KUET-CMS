@@ -1,25 +1,52 @@
 #include <stdio.h>
 #include "utility.h"
+#include "studentDashboard.h"
+#include "libraryInfoPage.h"
 
-void libraryInfoPage()
+void showLibraryInfo(LibraryDetails *record, const char *student_id)
+{
+
+    printBoxedText("LIBRARY INFORMATION");
+
+    printf("\n\tStudent ID : %s\n", student_id);
+
+    printf("Title\t\t\tReturn Date\n");
+    for (int i = 0; i < 3; i++)
+    {
+        char dateString[11];
+        showDate(record->books[i].returnDate, dateString);
+        printf("%s   %s\n", record->books[i].bookTitle, dateString);
+    }
+    printf("\n\t================================\n");
+}
+
+void libraryInfoPage(const char *student_id, const char *filepath)
 {
     clearScreen();
-    printf("\n\t\t===== LIBRARY INFORMATION =====\n");
 
-    printf("\n\tStudent Name : Toriqul Islam\n");
+    FILE *fp = fopen(filepath, "rb");
+    if (fp == NULL)
+    {
+        printf("Error opening file: %s\n", filepath);
+        getCharacter("Press ENTER to return to the student dashboard...");
+        return;
+    }
 
-    printf("\n\tBooks Borrowed:\n");
-    printf("\t1. Let Us C\n");
-    printf("\t2. Discrete Mathematics\n");
+    LibraryDetails record;
+    StudentFileHeader header;
 
-    printf("\n\tIssue Date:\n");
-    printf("\t1. 01-10-2026\n");
-    printf("\t2. 03-10-2026\n");
+    fread(&header, sizeof(StudentFileHeader), 1, fp);
+    fseek(fp, header.libraryDetailsOffset, SEEK_SET);
 
-    printf("\n\tReturn Date:\n");
-    printf("\t1. 15-10-2026\n");
-    printf("\t2. 17-10-2026\n");
+    if (fread(&record, sizeof(LibraryDetails), 1, fp) != 1)
+    {
+        printf("Error reading file: %s\n", filepath);
+        fclose(fp);
+        getCharacter("Press ENTER to return to the student dashboard...");
+        return;
+    }
+    fclose(fp);
 
-    printf("\n\t================================\n");
-    getCharacter("\nPress ENTER to return to the student dashboard...");
+    showLibraryInfo(&record, student_id);
+    getCharacter("Press ENTER to return to the student dashboard...");
 }

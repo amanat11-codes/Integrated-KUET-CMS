@@ -1,134 +1,75 @@
 #include <stdio.h>
-#include "utility.h"
+#include <string.h>
+#include "studentDashboard.h"
+#include "academicInfoPage.h"
 
-struct Course
+void showAcademicRecord(AcademicRecord *record, const char *student_id)
 {
-    char courseNo[20];
-    char courseTitle[60];
-    float credit;
-    float gradePoint;
-    char letterGrade[5];
-};
+    printf("\n");
+    printBoxedText("ACADEMIC INFORMATION");
+    printf("Student ID : %s\n", student_id);
+    printf("Name       : %s\n", record->name);
+    printf("Department : %s (%s)\n", record->departmentName, record->departmentShortName);
+    printf("Session    : %d     Year : %d     Term : %d\n",
+           record->session, record->year, record->term);
 
-struct AcademicRecord
-{
-    int studentId;
-    char name[50];
-    char session[20];
-    char year[20];
-    char term[20];
+    printf("---------------------------------------------------------------\n");
 
-    struct Course courses[8];
+    printf("Sl.  Course Code.    Course Title                  Credit  GPA  Grade\n");
+    printf("------------------------------------------------------------------\n");
 
-    float creditTaken;
-    float creditCompleted;
-    float termGPA;
-    float CGPA;
-};
-
-
-void academicInfoPage(void)
-{
-    clearScreen();
-    struct AcademicRecord students[2] =
+    for (int j = 0; j < 5; j++)
     {
-        {
-            2107001,
-            "Toriqul Islam",
-            "2025-2026",
-            "First",
-            "First",
-
-            {
-                {"CSE 1101", "Structured Programming", 3.00, 4.00, "A+"},
-                {"CSE 1102", "Structured Programming Lab", 1.50, 3.75, "A"},
-                {"CSE 1107", "Discrete Mathematics", 3.00, 3.50, "A-"},
-                {"HUM 1107", "English and Human Communication", 3.00, 3.75, "A"},
-                {"HUM 1108", "English and Human Comm. Lab", 0.75, 4.00, "A+"},
-                {"MATH 1107", "Differential and Integral Calculus", 3.00, 3.50, "A-"},
-                {"PHY 1107", "Physics", 3.00, 3.25, "B+"},
-                {"PHY 1108", "Physics Laboratory", 1.50, 4.00, "A+"}
-            },
-
-            18.75,
-            18.75,
-            3.60,
-            3.60
-        },
-
-        {
-            2107002,
-            "Rahim Ahmed",
-            "2025-2026",
-            "First",
-            "First",
-
-            {
-                {"CSE 1101", "Structured Programming", 3.00, 3.50, "A-"},
-                {"CSE 1102", "Structured Programming Lab", 1.50, 3.75, "A"},
-                {"CSE 1107", "Discrete Mathematics", 3.00, 3.00, "B"},
-                {"HUM 1107", "English and Human Communication", 3.00, 3.50, "A-"},
-                {"HUM 1108", "English and Human Comm. Lab", 0.75, 4.00, "A+"},
-                {"MATH 1107", "Differential and Integral Calculus", 3.00, 3.25, "B+"},
-                {"PHY 1107", "Physics", 3.00, 3.50, "A-"},
-                {"PHY 1108", "Physics Laboratory", 1.50, 3.75, "A"}
-            },
-
-            18.75,
-            18.75,
-            3.45,
-            3.45
-        }
-    };
-
-    int id;
-
-    id = getInt("Enter Student ID: ");
-
-    for(int i = 0; i < 2; i++)
-    {
-        if(students[i].studentId == id)
-        {
-            struct AcademicRecord student = students[i];
-
-            printf("\n");
-            printf("                     ACADEMIC RECORDS\n");
-            printf("===============================================================\n");
-
-            printf("Student ID : %d\n", student.studentId);
-            printf("Name       : %s\n", student.name);
-            printf("Session    : %s     Year : %s     Term : %s\n",
-                   student.session, student.year, student.term);
-
-            printf("---------------------------------------------------------------\n");
-
-            printf("Sl.  Course No.    Course Title                  Credit  GP  Grade\n");
-            printf("---------------------------------------------------------------\n");
-
-            for(int j = 0; j < 8; j++)
-            {
-                printf("%-4d %-13s %-35s %.2f   %.2f  %s\n",
-                       j + 1,
-                       student.courses[j].courseNo,
-                       student.courses[j].courseTitle,
-                       student.courses[j].credit,
-                       student.courses[j].gradePoint,
-                       student.courses[j].letterGrade);
-            }
-
-            printf("---------------------------------------------------------------\n");
-
-            printf("Credit Taken           : %.2f\n", student.creditTaken);
-            printf("Credit Completed       : %.2f\n", student.creditCompleted);
-            printf("Term GPA               : %.2f\n", student.termGPA);
-            printf("CGPA                   : %.2f\n", student.CGPA);
-
-            printf("===============================================================\n");
-            getCharacter("Press ENTER to return to the student dashboard...");
-            return;
-        }
+        printf("%-4d %-13s %-35s %.2f   %.2f  %s\n",
+               j + 1,
+               record->courses[j].courseShortName,
+               record->courses[j].courseTitle,
+               record->courses[j].courseCredit,
+               record->courses[j].gradePoint,
+               record->courses[j].letterGrade);
     }
 
-    printf("Student not found.\n");
+    printf("---------------------------------------------------------------\n");
+
+    printf("Credit Taken           : %.2f\n", record->creditTaken);
+    printf("Credit Completed       : %.2f\n", record->creditCompleted);
+    printf("Term GPA               : %.2f\n", record->termGPA);
+    printf("CGPA                   : %.2f\n", record->cgpa);
+
+    printf("===============================================================\n");
+
+    return;
+}
+
+void academicInfoPage(const char *student_id, const char *filepath)
+{
+    clearScreen();
+
+    FILE *fp = fopen(filepath, "rb");
+    if (fp == NULL)
+    {
+        printf("Error opening file: %s\n", filepath);
+        getCharacter("Press ENTER to return to the student dashboard...");
+        return;
+    }
+
+    AcademicRecord record;
+    StudentFileHeader header;
+
+    fread(&header, sizeof(StudentFileHeader), 1, fp);
+    fseek(fp, header.academicRecordOffset, SEEK_SET);
+
+    if (fread(&record, sizeof(AcademicRecord), 1, fp) != 1)
+    {
+        printf("Error reading file: %s\n", filepath);
+        fclose(fp);
+        getCharacter("Press ENTER to return to the student dashboard...");
+        return;
+    }
+    fclose(fp);
+
+    showAcademicRecord(&record, student_id);
     getCharacter("Press ENTER to return to the student dashboard...");
+
+    return;
 }

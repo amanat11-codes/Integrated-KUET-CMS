@@ -89,3 +89,5 @@ config_private.h
 
 test_output/
 generated_data/
+
+*.md

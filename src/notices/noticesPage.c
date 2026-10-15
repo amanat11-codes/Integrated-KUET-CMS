@@ -3,7 +3,6 @@
 #include <string.h>
 #include "noticesPage.h"
 #include "utility.h"
-#include "sqlite3.h"
 
 #define TITLE_INTRO_PREVIEW_MAX_LENGTH 10
 
@@ -23,6 +22,7 @@ void displayNoticeListItem(int serial, char* date, char* title, char* intro)
     printf("\n");
 }
 
+/*
 void showNoticeDetails(sqlite3 *db, int id)
 {
     clearScreen();
@@ -103,10 +103,11 @@ int noticeExists(sqlite3 *db, int noticeId)
     sqlite3_finalize(stmt);
     return exists;
 }
+*/
 
-
-void noticesPage(sqlite3 *db)
+void noticesPage()
 {
+    /*
     int count = getTableRows(db, "notices");
     Notice *notices = malloc(count * sizeof(Notice));
     if (notices == NULL && count > 0)
@@ -116,10 +117,15 @@ void noticesPage(sqlite3 *db)
     }
     fetchAllNotices(db, notices);
     
+    
+    */
+
     clearScreen();
     printBoxedText("NOTICES");
-    
-    int choice;
+    getCharacter("Yet to implement. Press ENTER to go back...\n");
+    return;
+    //int choice;
+/*
 
     while (1)
     {
@@ -142,4 +148,6 @@ void noticesPage(sqlite3 *db)
 
         showNoticeDetails(db, choice);
     }
+        */
+
 }

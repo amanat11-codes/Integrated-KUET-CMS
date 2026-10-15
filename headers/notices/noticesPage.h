@@ -1,6 +1,4 @@
-#include "sqlite3.h"
-
-void noticesPage(sqlite3 *db);
+void noticesPage();
 #ifndef NOTICES_PAGE_H
 #define NOTICES_PAGE_H
 
@@ -17,11 +15,8 @@ typedef struct {
     char details[MAX_BODY_LENGTH];
 } Notice;
 
-void showNoticeDetails(sqlite3 *db, int id);
-void fetchAllNotices(sqlite3 *db, Notice *notices);
 void displayNoticeListItem(int serial, char* date, char* title, char* intro);
 void displayNoticeList(Notice *notices, int count);
-int noticeExists(sqlite3 *db, int noticeId);
 
 
 #endif

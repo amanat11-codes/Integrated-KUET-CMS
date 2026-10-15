@@ -1,120 +1,62 @@
-
 #include <stdio.h>
-#include <windows.h>
-#include <string.h>
-
+#include <stdlib.h>
+#include "studentDashboard.h"
 #include "studentProfilePage.h"
+#include "academicInfoPage.h"
 #include "hallDetailsPage.h"
 #include "libraryInfoPage.h"
-#include "academicInfoPage.h"
 #include "teacherProfilePage.h"
 #include "utility.h"
 
-#define LAST_CHOICE 6
+#define STUDENT_DASHBOARD_LAST_CHOICE 5
 
-static void openHallDetailsWindow(const char *student_id)
+
+
+
+
+void studentDashboard(const char *student_id, const char *filepath)
 {
-    char exePath[MAX_PATH];
-    char commandLine[MAX_PATH + 300];
-
-    STARTUPINFOA si = {0};
-    PROCESS_INFORMATION pi = {0};
-
-    si.cb = sizeof(si);
-
-    DWORD len = GetModuleFileNameA(
-        NULL, exePath, MAX_PATH
-    );
-
-    if (len == 0 || len >= MAX_PATH)
-    {
-        printf("Cannot locate the application.\n");
-        return;
-    }
-
-    snprintf(
-        commandLine,
-        sizeof(commandLine),
-        "\"%s\" --hall-details \"%s\"",
-        exePath,
-        student_id
-    );
-
-    if (!CreateProcessA(
-            exePath, commandLine,
-            NULL, NULL, FALSE,
-            CREATE_NEW_CONSOLE,
-            NULL, NULL, &si, &pi))
-    {
-        printf("Cannot open Hall Details Window. Error: %lu\n",
-               GetLastError());
-        return;
-    }
-
-    CloseHandle(pi.hThread);
-    CloseHandle(pi.hProcess);
-}
-
-void studentDashboard(const char *student_id)
-{
-    int choice;
-
     while (1)
     {
-        printf("\n\n");
-        printf("\t====================================\n");
-        printf("\t        KUET STUDENT DASHBOARD\n");
-        printf("\t====================================\n");
+        clearScreen();
+        printBoxedText("STUDENT DASHBOARD PANEL");
+        printMenuItems(STUDENT_DASHBOARD_LAST_CHOICE, "Student Profile", "Academic Information", "Hall Details", "Library Information", "Teacher Information");
+        printf("0. Quit\n");
 
-        printf("\t1. Student Profile\n");
-        printf("\t2. Academic Information\n");
-        printf("\t3. Hall Details\n");
-        printf("\t4. Library Information\n");
-        printf("\t5. Teacher Information\n");
-        printf("\t6. Logout\n");
+        int choice = getInt("> ");
 
-        printf("\n\tEnter your choice: ");
-
-        if (scanf("%d", &choice) != 1)
+        while (choice < 0 || choice > STUDENT_DASHBOARD_LAST_CHOICE)
         {
-            int ch;
+            printf("Please input a valid option...\n");
+            choice = getInt("> ");
 
-            while ((ch = getchar()) != '\n' && ch != EOF)
-            {
-            }
-
-            printf("\n\tInvalid input! Enter a number.\n");
-            continue;
+            if (choice == 0)
+                return;
         }
+
+        if (choice == 0)
+            return;
 
         switch (choice)
         {
             case 1:
-                studentProfilePage();
+                studentProfilePage(student_id, filepath); // prepare db
                 break;
-
             case 2:
-                academicInfoPage();
+                academicInfoPage(student_id, filepath);
                 break;
-
             case 3:
-    openHallDetailsWindow(student_id);
-    break;
-
+                hallDetailsPage(student_id, filepath);
+                break;
             case 4:
-                libraryInfoPage();
+                libraryInfoPage(student_id, filepath); // prepare db
                 break;
-
             case 5:
-                teacherProfilePage();
+                //teacherProfilePage();
                 break;
-
-            case 6:
-                printf("\n\tLogging out...\n");
-                return;
-
             default:
-                printf("\n\tInvalid choice!\n");
+                getCharacter("Press ENTER to go back...\n");
+                return;
         }
     }
 }

@@ -17,7 +17,7 @@ CC       := gcc
 ## headers/<feature>/<file>.h.
 INC_DIRS := $(sort $(INC_DIR) $(dir $(wildcard $(INC_DIR)/*/*.h)) $(dir $(wildcard $(INC_DIR)/*/*/*.h)))
 CFLAGS   := -Wall -Wextra -std=c11 -g $(addprefix -I,$(INC_DIRS))
-LDFLAGS  :=
+LDFLAGS  := 
 
 ## ---- Sources (auto-detected) ----
 ## Every .c file in src/ is picked up automatically, including files in

@@ -3,7 +3,7 @@
 #include "utility.h"
 #include "adminDashboardPage.h"
 #include "adminLoginPage.h"
-void adminLoginPage(sqlite3 *db)
+void adminLoginPage()
 {
     while (1)
     {
@@ -27,6 +27,6 @@ void adminLoginPage(sqlite3 *db)
         }
     }
     
-    adminDashboard(db);
+    adminDashboard();
 
 }
