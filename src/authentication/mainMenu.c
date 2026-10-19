@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "mainMenu.h"
@@ -14,33 +13,70 @@
 void mainMenu()
 {
     int choice;
+
     while (1)
     {
         clearScreen();
-        printBoxedText("INTEGRATED KUET CMS");
-        printf("Welcome to Integrated KUET Campus Management System!\n\n");
-        // printf("Today is %s\n", __DATE__);
-        printUnderlinedText("Main Menu");
-        printMenuItems(CHOICE_LAST, "Login Portal", "Registration Portal", "Notice Board");
-        printf("0. Quit\n");
 
-        choice = getInt("> ");
+        printf("\n");
+        printf("================================================================\n");
+        printf("                                                                \n");
+        printf("                  KHULNA UNIVERSITY OF                          \n");
+        printf("              ENGINEERING & TECHNOLOGY                          \n");
+        printf("                                                                \n");
+        printf("                  INTEGRATED KUET                     \n");
+        printf("              CAMPUS MANAGEMENT SYSTEM                          \n");
+        printf("                                                                \n");
+        printf("================================================================\n");
+
+        printf("\n");
+        printf("       Welcome to the KUET Campus Management System!\n");
+        printf("       One Campus. One System. One Community.\n");
+        printf("\n");
+
+        printf("----------------------------------------------------------------\n");
+        printf("                         MAIN MENU                              \n");
+        printf("----------------------------------------------------------------\n");
+
+        printf("\n");
+
+        printMenuItems(
+            CHOICE_LAST,
+            "Login Portal",
+            "Registration Portal",
+            "Notice Board"
+        );
+
+        printf("\n");
+        printf("----------------------------------------------------------------\n");
+        printf("  0. Quit                                                       \n");
+        printf("----------------------------------------------------------------\n");
+
+        printf("\n");
+        choice = getInt("  Enter your choice: ");
 
         while (choice < 0 || choice > CHOICE_LAST)
         {
-            printf("Please input a valid option...\n");
-            choice = getInt("> ");
+            printf("\n");
+            printf("  [!] Invalid option. Please choose from 0 to %d.\n",
+                   CHOICE_LAST);
+
+            choice = getInt("  Enter your choice: ");
 
             if (choice == 0)
             {
-                printf("Exiting...\n");
+                printf("\n");
+                printf("  Thank you for using KUET CMS!\n");
+                printf("  Exiting application...\n");
                 exit(0);
             }
         }
 
         if (choice == 0)
         {
-            printf("Exiting...\n");
+            printf("\n");
+            printf("  Thank you for using KUET CMS!\n");
+            printf("  Exiting application...\n");
             exit(0);
         }
 
@@ -49,12 +85,15 @@ void mainMenu()
         case 1:
             loginPortal();
             break;
+
         case 2:
             // registrationPortal();
             break;
+
         case 3:
             // noticeBoard();
             break;
+
         default:
             printf("Exiting...\n");
             exit(0);
