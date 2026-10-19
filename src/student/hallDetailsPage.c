@@ -221,11 +221,26 @@ void showHallDetails(HallDetails *record, const char *student_id)
     printf("Next Monthly Feast     %s\n", nextFeastDate);
 }
 
+/*
+typedef struct {
+    char hallName[50];
+    int mealStatus;
+    int boarderNumber;
+    char hallSide[10];
+    Date nextMonthlyFeast;
+    int setMeal;
+} HallDetails;
+*/
+
+
+
 void hallDetailsPage(const char *student_id, const char *filepath)
 {
     clearScreen();
     printBoxedText("HALL DETAILS PAGE");
 
+
+    
     FILE *fp = fopen(filepath, "rb");
     if (fp == NULL)
     {
@@ -250,6 +265,9 @@ void hallDetailsPage(const char *student_id, const char *filepath)
     fclose(fp);
 
     showHallDetails(&record, student_id);
+    
+
+
     getCharacter("Press ENTER to return to the student dashboard...");
 
 }

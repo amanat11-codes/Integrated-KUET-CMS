@@ -53,7 +53,7 @@ void mainMenu()
             // registrationPortal();
             break;
         case 3:
-            // noticeBoard();
+            noticesPage();
             break;
         default:
             printf("Exiting...\n");

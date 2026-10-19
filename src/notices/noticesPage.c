@@ -3,151 +3,221 @@
 #include <string.h>
 #include "noticesPage.h"
 #include "utility.h"
+#include <dirent.h>
 
-#define TITLE_INTRO_PREVIEW_MAX_LENGTH 10
+#define TITLE_PREVIEW_MAX_LENGTH 10
+#define DESCRIPTION_PREVIEW_MAX_LENGTH 50
+#define MAX_NOTICES_PER_PAGE 10
 
-void displayNoticeListItem(int serial, char* date, char* title, char* intro)
+#define NOTICE_DIRECTORY "database/notices"
+
+int getNoticesCount()
 {
-    printf("%d\t%s\t", serial,date);
-    
-    if(strlen(title) > TITLE_INTRO_PREVIEW_MAX_LENGTH)
-        printf("%.*s...", TITLE_INTRO_PREVIEW_MAX_LENGTH, title);
-    else
-        printf("%s", title);
-    printf("\t");
-    if (strlen(intro) > TITLE_INTRO_PREVIEW_MAX_LENGTH)
-        printf("%.*s...", TITLE_INTRO_PREVIEW_MAX_LENGTH, intro);
-    else
-        printf("%s", intro);
-    printf("\n");
-}
+    DIR *dir;
+    struct dirent *entry;
+    int count = 0;
 
-/*
-void showNoticeDetails(sqlite3 *db, int id)
-{
-    clearScreen();
-
-    char *sql = "SELECT * FROM notices WHERE notice_id = ?;";
-    sqlite3_stmt *stmt;
-
-    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-
-    sqlite3_bind_int(stmt, 1, id);
-
-    if (sqlite3_step(stmt) == SQLITE_ROW)
+    dir = opendir(NOTICE_DIRECTORY);
+    if (dir == NULL)
     {
-        printf("\n==================== NOTICE ====================\n");
-        printf("%s\n%s\n\n%s\n", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2), sqlite3_column_text(stmt, 4));
-        printf("================================================\n");
-        getCharacter("Press ENTER to go back...");
-    } else
-    {
-        printf("\n==================== NOTICE ====================\n");
-        printf("Notice not found\n");
-        getCharacter("Press ENTER to go back...");
-        printf("================================================\n");
+        printf("Error: Could not open notices directory.\n");
+        return 0;
     }
 
-    clearScreen();
+    while ((entry = readdir(dir)) != NULL)
+    {
+        if (strstr(entry->d_name, ".notice") != NULL)
+            count++;
+    }
+
+    closedir(dir);
+    return count;
 }
 
-void fetchAllNotices(sqlite3 *db, Notice *notices)
+
+void fetchAllNotices(Notice *notices,int count)
 {
-    char *sql = "SELECT * FROM notices;";
-    sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-    int i = 0;
-    while (sqlite3_step(stmt) == SQLITE_ROW)
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(NOTICE_DIRECTORY);
+    if (dir == NULL)
     {
-        notices[i].id = sqlite3_column_int(stmt, 0);
-        if ((char*)sqlite3_column_text(stmt, 1) != NULL)
-            strcpy(notices[i].date, (char*)sqlite3_column_text(stmt, 1));
-        else
-            strcpy(notices[i].date, "N/A");
+        printf("Error: Could not open notices directory.\n");
+        return;
+    }
+
+    entry = readdir(dir);
+    for (int i = 0; i < count; i++, entry = readdir(dir))
+    {
+        char filePath[256];
+        FILE *fp;
+
+        // if the filename of the current entry does not contain ".notice", skip it
+        if (strstr(entry->d_name, ".notice") == NULL)
+            continue;
+
+        // construct the full file path by concatenating the directory path and the filename
+        snprintf(filePath, sizeof(filePath), "%s/%s", NOTICE_DIRECTORY, entry->d_name);
         
-        if ((char*)sqlite3_column_text(stmt, 2) != NULL)
-            strcpy(notices[i].title, (char*)sqlite3_column_text(stmt, 2));
-        else
-            strcpy(notices[i].title, "N/A");
-        if ((char*)sqlite3_column_text(stmt, 3) != NULL)
-            strcpy(notices[i].intro, (char*)sqlite3_column_text(stmt, 3));
-        else
-            strcpy(notices[i].intro, "N/A");
-        if ((char*)sqlite3_column_text(stmt, 4) != NULL)
-            strcpy(notices[i].details, (char*)sqlite3_column_text(stmt, 4));
-        else
-            strcpy(notices[i].details, "N/A");
-        i++;
+
+        fp = fopen(filePath, "r");
+        if (fp == NULL)
+            // if the file cannot be opened, print an error message and continue to the next entry
+        {
+            printf("Error: Could not open notice file %s.\n", filePath);
+            continue;
+        }
+
+        // create a new notice struct
+        Notice notice;
+
+        // copy the content from the file into the notice struct
+        fread(&notice, sizeof(Notice), 1, fp);
+
+        // close the file
+        fclose(fp);
+
+        // add the notice to the array
+        notices[i] = notice;
     }
-    sqlite3_finalize(stmt);
+    closedir(dir);
 }
+
+void generatePreview(char *dest, char *src, int maxLength)
+{
+    if (strlen(src) <= maxLength)
+    {
+        strcpy(dest, src);
+    }
+    else
+    {
+        strncpy(dest, src, maxLength - 4);
+        strcat(dest, "...");
+        dest[maxLength - 1] = '\0';
+    }
+}
+
+void showNoticeDetails(Notice *notices, char *id, int count)
+{
+    clearScreen();
+
+    for (int i = 0; i < count; i++)
+    {
+        if (strcmp(notices[i].noticeId, id) == 0)
+        {
+            printf("\n==================== NOTICE ====================\n");
+            printf("%s\n%s\n\n%s\n", notices[i].noticeId, notices[i].date, notices[i].Description);
+            printf("================================================\n");
+            getCharacter("Press ENTER to go back...");
+            clearScreen();
+            return;
+        }
+    }
+    printf("Notice not found.\n");
+    getCharacter("Press ENTER to go back...");
+    clearScreen();
+}
+
+
+
 
 void displayNoticeList(Notice *notices, int count)
 {
     printf("%s\t%s\t\t%s\t\t%s\n", "ID", "Date", "Title", "Description");
     printf("---------------------------------------------------------\n");
+    
+    char *dateString;
+    char *titlePreview;
+    char *descriptionPreview;
     for (register int i = 0; i < count; i++)
-        displayNoticeListItem(notices[i].id, notices[i].date, notices[i].title, notices[i].intro);
+    {
+        titlePreview = malloc(TITLE_PREVIEW_MAX_LENGTH);
+        descriptionPreview = malloc(DESCRIPTION_PREVIEW_MAX_LENGTH);
+
+        showDate(notices[i].date, &dateString);
+
+        if (strlen(notices[i].Title) <= TITLE_PREVIEW_MAX_LENGTH)
+            strcpy(titlePreview, notices[i].Title);
+        else
+            generatePreview(titlePreview, notices[i].Title, TITLE_PREVIEW_MAX_LENGTH);
+
+
+        if (strlen(notices[i].Description) <= DESCRIPTION_PREVIEW_MAX_LENGTH)
+            strcpy(descriptionPreview, notices[i].Description);
+        else
+            generatePreview(descriptionPreview, notices[i].Description, DESCRIPTION_PREVIEW_MAX_LENGTH);
+
+
+        //displayNoticeListItem(notices[i].noticeId, dateString, titlePreview, descriptionPreview);
+
+        free(titlePreview);
+        free(descriptionPreview);
+    }
 }
 
-int noticeExists(sqlite3 *db, int noticeId)
+int noticeExists(char *noticeId)
 {
-    char *sql = "SELECT EXISTS (SELECT 1 FROM NOTICES WHERE notice_id = ?);";
-    sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-    sqlite3_bind_int(stmt, 1, noticeId);
-    int exists = 0;
+    char *filepath = malloc(strlen(NOTICE_DIRECTORY) + strlen(noticeId) + 9); // 8 for "/.notice" and null terminator
+    
+    snprintf(filepath, sizeof(filepath), "%s/%s.notice", NOTICE_DIRECTORY, noticeId);
 
-    if (sqlite3_step(stmt) == SQLITE_ROW)
-        exists = sqlite3_column_int(stmt, 0);
-    sqlite3_finalize(stmt);
-    return exists;
+    FILE *fp = fopen(filepath, "r");
+    if (fp != NULL)
+    {
+        fclose(fp);
+        free(filepath);
+        return 1; // Notice exists
+    }
+    else
+    {
+        free(filepath);
+        return 0; // Notice does not exist
+    }
 }
-*/
+
 
 void noticesPage()
 {
-    /*
-    int count = getTableRows(db, "notices");
-    Notice *notices = malloc(count * sizeof(Notice));
-    if (notices == NULL && count > 0)
-    {
-        printf("Error: Failed to allocate memory for notices.\n");
-        exit(1);
-    }
-    fetchAllNotices(db, notices);
-    
-    
-    */
-
     clearScreen();
     printBoxedText("NOTICES");
-    getCharacter("Yet to implement. Press ENTER to go back...\n");
-    return;
-    //int choice;
-/*
+
+    int count = getNoticesCount();
+    if (count == 0)
+    {
+        printf("No notices found.\n");
+        getCharacter("Press ENTER to go back...\n");
+        return;
+    }
+
+    Notice *notices = malloc(count * sizeof(Notice));
+    
+    fetchAllNotices(notices, count);
+
+    char choice[5];
 
     while (1)
     {
         displayNoticeList(notices, count);
         printf("\n");
         printf("\nEnter notice ID to open a notice (0 to go back)\n");
-        choice = getInt("> ");
+        getString("> ", 5, &choice);
         
-        if (choice == 0)
+        if (strcmp(choice, "0") == 0)
         {
             free(notices);
             return;
         }
 
-        while(!noticeExists(db, choice))
+        while(!noticeExists(choice))
         {
             printf("Please input a valid ID from the list\n");
-            choice = getInt("> ");
+            getString("> ", 5, &choice);
         }
 
-        showNoticeDetails(db, choice);
+        showNoticeDetails(notices, choice, count);
     }
-        */
 
+    free(notices);
+    return;
 }
