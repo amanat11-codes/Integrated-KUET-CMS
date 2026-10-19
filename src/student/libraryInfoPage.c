@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "utility.h"
+#include <string.h>
+#include <stdlib.h>
 #include "studentDashboard.h"
 #include "libraryInfoPage.h"
 
@@ -9,9 +11,7 @@ void showLibraryInfo(LibraryDetails *record, const char *student_id)
     printf("\n\n");
     printBoxedText("LIBRARY INFORMATION");
 
-    printf("\n");
-    printf("       INTEGRATED KUET CAMPUS MANAGEMENT SYSTEM\n");
-    printf("       ========================================\n\n");
+    printAppHeader();
 
     /* Student information */
     printf("       +------------------------------------------+\n");
@@ -28,15 +28,21 @@ void showLibraryInfo(LibraryDetails *record, const char *student_id)
     /* Display the existing three book records */
     for (int i = 0; i < 3; i++)
     {
-        char dateString[11];
-
-        showDate(record->books[i].returnDate, dateString);
-
         printf("       +------------------------------------------+\n");
-        printf("       | BOOK %-2d                                   |\n", i + 1);
+        printf("       | BOOK %-2d                                  |\n", i + 1);
         printf("       |                                          |\n");
-        printf("       | Title      : %s\n", record->books[i].bookTitle);
-        printf("       | Return Date: %s\n", dateString);
+        
+        
+        if (strlen(record->books[i].bookTitle) == 0)
+        {
+            printf("       | Title      : N/A\n");
+            printf("       | Return Date: N/A\n");
+        }
+        else
+        {
+            printf("       | Title      : %-27s|\n", record->books[i].bookTitle);
+            printf("       | Return Date: %s\n", showDate(record->books[i].returnDate));    
+        }
         printf("       +------------------------------------------+\n\n");
     }
 
@@ -49,7 +55,7 @@ void showLibraryInfo(LibraryDetails *record, const char *student_id)
 void libraryInfoPage(const char *student_id, const char *filepath)
 {
     clearScreen();
-
+    printf("File path %s\n", filepath);
     FILE *fp = fopen(filepath, "rb");
 
     if (fp == NULL)
@@ -84,7 +90,7 @@ void libraryInfoPage(const char *student_id, const char *filepath)
         getCharacter("Press ENTER to return to the student dashboard...");
         return;
     }
-
+    
     fclose(fp);
 
     showLibraryInfo(&record, student_id);

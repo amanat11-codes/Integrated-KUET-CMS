@@ -49,7 +49,7 @@ void studentDashboard(const char *student_id, const char *filepath)
                 hallDetailsPage(student_id, filepath);
                 break;
             case 4:
-                libraryInfoPage(student_id, filepath); // prepare db
+                libraryInfoPage(student_id, filepath);
                 break;
             case 5:
                 //teacherProfilePage();

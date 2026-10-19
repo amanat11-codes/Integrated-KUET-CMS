@@ -6,8 +6,6 @@
 
 const int PADDING = 2;
 
-
-
 int getInt(char *prompt)
 {
     int value;
@@ -52,7 +50,6 @@ char getCharacter(char *prompt)
     scanf("%c", &ch);
     return ch;
 }
-
 
 void printBoxedText(char *text)
 {
@@ -111,7 +108,7 @@ void printMenuItems(int count, ...)
 
 LoginStatus credentialsValidation(const char *id, const char *password, UserType usertype, int idMaxLength, int passMaxLength, FILE *credentialsFile)
 {
-    
+
     if ((int)strlen(id) != idMaxLength || (int)strlen(password) != passMaxLength)
         return INVALID_CREDENTIALS;
 
@@ -153,14 +150,91 @@ void getFilePathForUserType(char *id, UserType userType, char *filepath)
     }
 }
 
-char* showDate(Date date)
+char *showDate(Date date)
 {
     static char dateString[11]; // Buffer to hold the formatted date string
     snprintf(dateString, sizeof(dateString), "%02d-%02d-%04d", date.day, date.month, date.year);
     return dateString;
 }
 
+void printAppHeader()
+{
+    printf("       INTEGRATED KUET CAMPUS MANAGEMENT SYSTEM\n");
+    printf("       ========================================\n\n");
+}
 
+#if 0
+
+int findMaximum(int *lineLengths, int lines)
+{
+    int maxLength = lineLengths[0];
+    for (register int i = 1; i < lines; i++)
+    {
+        if (lineLengths[i] > maxLength)
+            maxLength = lineLengths[i];
+    }
+    return maxLength;
+}
+
+void multiLineBoxedText(int lines, ...)
+{
+    va_list args;
+    va_list copy;
+
+    va_start(args, lines);
+    va_copy(copy, args);
+
+    // Get maximum length of the lines to determine the box width
+
+    int *lineLengths = malloc(lines * sizeof(int));
+
+    for (int i = 0; i < lines; i++)
+        lineLengths[i] = strlen(va_arg(copy, char *));
+
+    int maxLength = findMaximum(lineLengths, lines);
+    free(lineLengths);
+    va_end(copy);
+
+    // Print the top border of the box
+    int lenX = maxLength + 2 * PADDING + 1; // Add padding for the sides
+
+    printf(".");
+    for (int i = 0; i < lenX - 1; i++)
+        printf("-");
+
+    printf(".\n");
+    printf("|");
+
+    for (int i = 0; i < PADDING; i++)
+        printf(" ");
+
+    // Print the first line "header" of the box
+    char *line = va_arg(args, char *);
+    printf("%s", line);
+    // print padding
+    for (int i = 0; i < PADDING; i++)
+        printf(" ");
+
+    for (register int i = 0; i < lines - 1; i++)
+    {
+        printf("|\n");
+        printf("|");
+
+        // print padding
+        for (register int i = 0; i < PADDING; i++)
+            printf(" ");
+        printf("%s", va_arg(args, char *));
+        // print padding
+        for (register int i = 0; i < PADDING; i++)
+            printf(" ");
+    }
+    printf("|\n");
+    for (int i = 0; i < lenX - 1; i++)
+        printf("-");
+    printf(".\n");
+    va_end(args);
+}
+#endif
 
 void clearScreen()
 {

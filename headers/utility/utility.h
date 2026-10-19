@@ -40,6 +40,11 @@ void printMenuItems(int count, ...);
 LoginStatus credentialsValidation(const char *id, const char *password, UserType usertype, int idMaxLength, int passMaxLength, FILE *credentialsFile);
 void getFilePathForUserType(char *id, UserType userType, char *filepath);
 char* showDate(Date date);
+void printAppHeader();
+//void multiLineBoxedText(int lines, ...);
+//int findMaximum(int *lineLengths, int lines);
+
+
 void clearScreen();
 
 
