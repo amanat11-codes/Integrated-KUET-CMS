@@ -39,7 +39,7 @@ void printUnderlinedText(char *text);
 void printMenuItems(int count, ...);
 LoginStatus credentialsValidation(const char *id, const char *password, UserType usertype, int idMaxLength, int passMaxLength, FILE *credentialsFile);
 void getFilePathForUserType(char *id, UserType userType, char *filepath);
-void showDate(Date date, char *dateString);
+char* showDate(Date date);
 void clearScreen();
 
 

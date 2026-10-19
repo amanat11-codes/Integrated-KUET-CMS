@@ -20,10 +20,8 @@ void adminLoginPage()
             break;
         else
         {        
-            char ch;
-            ch = getCharacter("Wrong ID or password.\nPress ENTER to try again or any other key to go back... ");
-
-            if (ch != '\n') return;
+            getCharacter("\n[ERROR] Invalid ID or password. Press ENTER to return to login page...");
+            return;
         }
     }
     

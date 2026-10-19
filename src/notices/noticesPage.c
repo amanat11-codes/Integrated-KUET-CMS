@@ -5,13 +5,22 @@
 #include "utility.h"
 #include <dirent.h>
 
-#define TITLE_PREVIEW_MAX_LENGTH 10
+#define TITLE_PREVIEW_MAX_LENGTH 20
 #define DESCRIPTION_PREVIEW_MAX_LENGTH 50
-#define MAX_NOTICES_PER_PAGE 10
 
 #define NOTICE_DIRECTORY "database/notices"
 
-int getNoticesCount()
+static int isNoticeFile(const char *filename)
+{
+    const char *extension = ".notice";
+    size_t filenameLength = strlen(filename);
+    size_t extensionLength = strlen(extension);
+
+    return filenameLength > extensionLength &&
+           strcmp(filename + filenameLength - extensionLength, extension) == 0;
+}
+
+int getNoticesCount(void)
 {
     DIR *dir;
     struct dirent *entry;
@@ -26,7 +35,7 @@ int getNoticesCount()
 
     while ((entry = readdir(dir)) != NULL)
     {
-        if (strstr(entry->d_name, ".notice") != NULL)
+        if (isNoticeFile(entry->d_name))
             count++;
     }
 
@@ -34,8 +43,7 @@ int getNoticesCount()
     return count;
 }
 
-
-void fetchAllNotices(Notice *notices,int count)
+int fetchAllNotices(Notice *notices, int count)
 {
     DIR *dir;
     struct dirent *entry;
@@ -44,57 +52,63 @@ void fetchAllNotices(Notice *notices,int count)
     if (dir == NULL)
     {
         printf("Error: Could not open notices directory.\n");
-        return;
+        return 0;
     }
 
-    entry = readdir(dir);
-    for (int i = 0; i < count; i++, entry = readdir(dir))
+    int i = 0;
+    while (i < count && (entry = readdir(dir)) != NULL)
     {
+        if (!isNoticeFile(entry->d_name))
+            continue;
+
         char filePath[256];
-        FILE *fp;
-
-        // if the filename of the current entry does not contain ".notice", skip it
-        if (strstr(entry->d_name, ".notice") == NULL)
+        int pathLength = snprintf(filePath, sizeof(filePath), "%s/%s",
+                                  NOTICE_DIRECTORY, entry->d_name);
+        if (pathLength < 0 || (size_t)pathLength >= sizeof(filePath))
             continue;
 
-        // construct the full file path by concatenating the directory path and the filename
-        snprintf(filePath, sizeof(filePath), "%s/%s", NOTICE_DIRECTORY, entry->d_name);
-        
-
-        fp = fopen(filePath, "r");
+        FILE *fp = fopen(filePath, "rb");
         if (fp == NULL)
-            // if the file cannot be opened, print an error message and continue to the next entry
-        {
-            printf("Error: Could not open notice file %s.\n", filePath);
             continue;
-        }
 
-        // create a new notice struct
         Notice notice;
-
-        // copy the content from the file into the notice struct
-        fread(&notice, sizeof(Notice), 1, fp);
-
-        // close the file
+        int readSuccessfully = fread(&notice, sizeof(Notice), 1, fp) == 1;
         fclose(fp);
 
-        // add the notice to the array
-        notices[i] = notice;
+        if (readSuccessfully)
+            notices[i++] = notice;
     }
+
     closedir(dir);
+    return i;
 }
 
-void generatePreview(char *dest, char *src, int maxLength)
+void generatePreview(char *dest, const char *src, int maxLength)
 {
-    if (strlen(src) <= maxLength)
+    size_t sourceLength = strlen(src);
+
+    if (maxLength <= 0)
+    {
+        dest[0] = '\0';
+    }
+    else if (sourceLength < (size_t)maxLength)
     {
         strcpy(dest, src);
     }
     else
     {
-        strncpy(dest, src, maxLength - 4);
-        strcat(dest, "...");
-        dest[maxLength - 1] = '\0';
+        if (maxLength <= 3)
+        {
+            for (int i = 0; i < maxLength; i++)
+                dest[i] = '.';
+            dest[maxLength] = '\0';
+            return;
+        }
+
+        int prefixLength = maxLength > 3 ? maxLength - 3 : 0;
+        strncpy(dest, src, (size_t)prefixLength);
+        strcpy(dest + prefixLength, "...");
+        dest[maxLength] = '\0';
     }
 }
 
@@ -107,7 +121,8 @@ void showNoticeDetails(Notice *notices, char *id, int count)
         if (strcmp(notices[i].noticeId, id) == 0)
         {
             printf("\n==================== NOTICE ====================\n");
-            printf("%s\n%s\n\n%s\n", notices[i].noticeId, notices[i].date, notices[i].Description);
+            printf("%s\n%s\n\n%s\n", notices[i].noticeId,
+                   showDate(notices[i].date), notices[i].Description);
             printf("================================================\n");
             getCharacter("Press ENTER to go back...");
             clearScreen();
@@ -119,63 +134,42 @@ void showNoticeDetails(Notice *notices, char *id, int count)
     clearScreen();
 }
 
-
-
-
 void displayNoticeList(Notice *notices, int count)
 {
     printf("%s\t%s\t\t%s\t\t%s\n", "ID", "Date", "Title", "Description");
     printf("---------------------------------------------------------\n");
     
-    char *dateString;
-    char *titlePreview;
-    char *descriptionPreview;
-    for (register int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)
     {
-        titlePreview = malloc(TITLE_PREVIEW_MAX_LENGTH);
-        descriptionPreview = malloc(DESCRIPTION_PREVIEW_MAX_LENGTH);
+        char titlePreview[TITLE_PREVIEW_MAX_LENGTH + 1];
+        char descriptionPreview[DESCRIPTION_PREVIEW_MAX_LENGTH + 1];
 
-        showDate(notices[i].date, &dateString);
+        generatePreview(titlePreview, notices[i].Title, TITLE_PREVIEW_MAX_LENGTH);
+        generatePreview(descriptionPreview, notices[i].Description,
+                        DESCRIPTION_PREVIEW_MAX_LENGTH);
 
-        if (strlen(notices[i].Title) <= TITLE_PREVIEW_MAX_LENGTH)
-            strcpy(titlePreview, notices[i].Title);
-        else
-            generatePreview(titlePreview, notices[i].Title, TITLE_PREVIEW_MAX_LENGTH);
-
-
-        if (strlen(notices[i].Description) <= DESCRIPTION_PREVIEW_MAX_LENGTH)
-            strcpy(descriptionPreview, notices[i].Description);
-        else
-            generatePreview(descriptionPreview, notices[i].Description, DESCRIPTION_PREVIEW_MAX_LENGTH);
-
-
-        //displayNoticeListItem(notices[i].noticeId, dateString, titlePreview, descriptionPreview);
-
-        free(titlePreview);
-        free(descriptionPreview);
+        printf("%s\t%s\t\t%s\t\t%s\n", notices[i].noticeId,
+               showDate(notices[i].date), titlePreview, descriptionPreview);
     }
 }
 
-int noticeExists(char *noticeId)
+int noticeExists(const char *noticeId)
 {
-    char *filepath = malloc(strlen(NOTICE_DIRECTORY) + strlen(noticeId) + 9); // 8 for "/.notice" and null terminator
-    
-    snprintf(filepath, sizeof(filepath), "%s/%s.notice", NOTICE_DIRECTORY, noticeId);
+    char filepath[256];
+    int pathLength = snprintf(filepath, sizeof(filepath), "%s/%s.notice",
+                              NOTICE_DIRECTORY, noticeId);
+    if (pathLength < 0 || (size_t)pathLength >= sizeof(filepath))
+        return 0;
 
-    FILE *fp = fopen(filepath, "r");
+    FILE *fp = fopen(filepath, "rb");
     if (fp != NULL)
     {
         fclose(fp);
-        free(filepath);
-        return 1; // Notice exists
+        return 1;
     }
-    else
-    {
-        free(filepath);
-        return 0; // Notice does not exist
-    }
-}
 
+    return 0;
+}
 
 void noticesPage()
 {
@@ -191,8 +185,21 @@ void noticesPage()
     }
 
     Notice *notices = malloc(count * sizeof(Notice));
-    
-    fetchAllNotices(notices, count);
+    if (notices == NULL)
+    {
+        printf("Error: Could not allocate memory for notices.\n");
+        getCharacter("Press ENTER to go back...\n");
+        return;
+    }
+
+    count = fetchAllNotices(notices, count);
+    if (count == 0)
+    {
+        free(notices);
+        printf("No readable notices found.\n");
+        getCharacter("Press ENTER to go back...\n");
+        return;
+    }
 
     char choice[5];
 
@@ -201,7 +208,7 @@ void noticesPage()
         displayNoticeList(notices, count);
         printf("\n");
         printf("\nEnter notice ID to open a notice (0 to go back)\n");
-        getString("> ", 5, &choice);
+        getString("> ", sizeof(choice), choice);
         
         if (strcmp(choice, "0") == 0)
         {
@@ -212,7 +219,7 @@ void noticesPage()
         while(!noticeExists(choice))
         {
             printf("Please input a valid ID from the list\n");
-            getString("> ", 5, &choice);
+            getString("> ", sizeof(choice), choice);
         }
 
         showNoticeDetails(notices, choice, count);

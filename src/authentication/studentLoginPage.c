@@ -44,10 +44,10 @@ void studentLoginPage(void)
             studentDashboard(student_id, filepath);
             return;
         case INVALID_CREDENTIALS:
-            getCharacter("Invalid Student ID or Password.");
+            getCharacter("Invalid Student ID or Password. Press ENTER to return to login menu...");
             return;
         case RECORD_NOT_FOUND:
-            getCharacter("Student record not found.");
+            getCharacter("Student record not found. Press ENTER to return to login menu...");
             return;
         }
     }

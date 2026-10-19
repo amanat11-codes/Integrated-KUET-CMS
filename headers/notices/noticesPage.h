@@ -16,8 +16,11 @@ typedef struct {
     char Description[512];
 } Notice;
 
+int getNoticesCount(void);
+int fetchAllNotices(Notice *notices, int count);
 void displayNoticeListItem(int serial, char* date, char* title, char* intro);
 void displayNoticeList(Notice *notices, int count);
+int noticeExists(const char *noticeId);
 
 
 #endif

@@ -483,9 +483,8 @@ void showHallDetails(
     HallDetails *record,
     const char *student_id)
 {
-    char nextFeastDate[32] = "Not available";
-
-    showDate(record->nextMonthlyFeast, nextFeastDate);
+    char *nextFeastDate = "N/A";
+    nextFeastDate = showDate(record->nextMonthlyFeast);
 
     time_t today = getToday();
     time_t start = dateToTime(record->offStartDate);

@@ -153,10 +153,11 @@ void getFilePathForUserType(char *id, UserType userType, char *filepath)
     }
 }
 
-void showDate(Date date, char *dateString)
+char* showDate(Date date)
 {
-    snprintf(dateString, 11, "%d-%d-%d", date.day, date.month, date.year);
-    dateString[10] = '\0';
+    static char dateString[11]; // Buffer to hold the formatted date string
+    snprintf(dateString, sizeof(dateString), "%02d-%02d-%04d", date.day, date.month, date.year);
+    return dateString;
 }
 
 

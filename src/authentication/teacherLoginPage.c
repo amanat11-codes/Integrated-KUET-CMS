@@ -40,11 +40,11 @@ void teacherLoginPage(void)
             teacherDashboard();
             return;
         case INVALID_CREDENTIALS:
-            getCharacter("Invalid Teacher ID or Password. Press ENTER to try again...");
-            break;
+            getCharacter("Invalid Teacher ID or Password. Press ENTER to return to login menu...");
+            return;
         case RECORD_NOT_FOUND:
-            getCharacter("Teacher record not found. Press ENTER to try again...");
-            break;
+            getCharacter("Teacher record not found. Press ENTER to return to login menu...");
+            return;
         }
     }
 }
