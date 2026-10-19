@@ -28,9 +28,9 @@ void showLibraryInfo(LibraryDetails *record, const char *student_id)
     /* Display the existing three book records */
     for (int i = 0; i < 3; i++)
     {
-        char *dateString;
+        char dateString[11];
 
-        dateString = showDate(record->books[i].returnDate);
+        showDate(record->books[i].returnDate, dateString);
 
         printf("       +------------------------------------------+\n");
         printf("       | BOOK %-2d                                   |\n", i + 1);
