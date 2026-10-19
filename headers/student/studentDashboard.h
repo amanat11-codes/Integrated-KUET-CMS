@@ -48,6 +48,8 @@ typedef struct {
     char hallSide[10];
     Date nextMonthlyFeast;
     int setMeal;
+    char offStartDate[11]; 
+    char offEndDate[11];
 } HallDetails;
 
 typedef struct {
