@@ -36,9 +36,13 @@ void teacherLoginPage(void)
         switch (status)
         {
         case SUCCESS:
+        {
+            char filepath[256];
             getCharacter("Login successful! Press ENTER to continue...");
-            teacherDashboard();
+            getFilePathForUserType(teacher_id, TEACHER, filepath);
+            teacherDashboard(teacher_id, filepath);
             return;
+        }
         case INVALID_CREDENTIALS:
             getCharacter("Invalid Teacher ID or Password. Press ENTER to return to login menu...");
             return;

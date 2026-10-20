@@ -6,6 +6,10 @@
 
 const int PADDING = 2;
 
+const char *department_short_names[] = {
+    "EEE", "CSE", "CE", "ME", "MSE",
+    "MTE", "ESE", "ECE", "ARCHI", "URP"};
+
 int getInt(char *prompt)
 {
     int value;
@@ -235,6 +239,20 @@ void multiLineBoxedText(int lines, ...)
     va_end(args);
 }
 #endif
+
+
+int validateEmailFormat(const char *email, UserType userType)
+{
+    (void)userType;
+
+    if (email == NULL || strchr(email, '@') == NULL)
+    {
+        printf("Invalid email format. Please enter an email containing '@'.\n");
+        return 1;
+    }
+
+    return 0;
+}
 
 void clearScreen()
 {

@@ -1,26 +1,47 @@
 #include <stdio.h>
 #include "utility.h"
-//Toriqul
-void teacherProfilePage()
+#include "teacherProfilePage.h"
+
+void showTeacherProfile(const TeacherProfile *record,
+                               const char *teacherId)
 {
     clearScreen();
     printBoxedText("TEACHER PROFILE PAGE");
-    printf("Teacher Profile Page yet to be implemented\n");
-    getCharacter("Press ENTER to return to the student dashboard...");
 
-/*
-printf("\n========== TEACHER PROFILE ==========\n");
+    printf("Name                   %s\n", record->name);
+    printf("Teacher ID             %s\n", teacherId);
+    printf("Designation            %s\n", record->designation);
+    printf("Department             %s\n", record->department);
+    printf("Phone                  %s\n", record->phone);
+    printf("Email                  %s\n", record->email);
+    printf("Research interest     %s\n", record->researchInterest);
+}
 
-printf("Name            : Dr. Rahman\n");
-printf("Designation     : Professor\n");
-printf("Phone           : 017XXXXXXXX\n");
-printf("Email           : rahman@kuet.ac.bd\n");
-printf("Department      : Computer Science and Engineering\n");
-printf("Research Interest: Artificial Intelligence\n");
-printf("Profile Link    : www.kuet.ac.bd/rahman\n");
+void teacherProfilePage(const char *teacherId, const char *filepath)
+{
+    FILE *fp = fopen(filepath, "rb");
+    if (fp == NULL)
+    {
+        clearScreen();
+        printBoxedText("TEACHER PROFILE PAGE");
+        printf("Error opening file: %s\n", filepath);
+        getCharacter("Press ENTER to return to the teacher dashboard...");
+        return;
+    }
 
-printf("=====================================\n");
+    TeacherProfile record;
+    if (fread(&record, sizeof(record), 1, fp) != 1)
+    {
+        clearScreen();
+        printBoxedText("TEACHER PROFILE PAGE");
+        printf("Error reading file: %s\n", filepath);
+        fclose(fp);
+        getCharacter("Press ENTER to return to the teacher dashboard...");
+        return;
+    }
 
-*/
+    fclose(fp);
+    showTeacherProfile(&record, teacherId);
+    getCharacter("Press ENTER to return to the teacher dashboard...");
 
 }

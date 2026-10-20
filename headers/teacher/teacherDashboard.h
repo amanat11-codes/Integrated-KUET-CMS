@@ -4,6 +4,6 @@
 void updateCTMarks();
 void updateTermMarks();
 void checkStudentProfile();
-void teacherDashboard();
+void teacherDashboard(const char *teacherId, const char *filepath);
 
 #endif

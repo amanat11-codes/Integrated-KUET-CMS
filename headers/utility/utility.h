@@ -41,6 +41,8 @@ LoginStatus credentialsValidation(const char *id, const char *password, UserType
 void getFilePathForUserType(char *id, UserType userType, char *filepath);
 char* showDate(Date date);
 void printAppHeader();
+int validateEmailFormat(const char *email, UserType userType);
+
 //void multiLineBoxedText(int lines, ...);
 //int findMaximum(int *lineLengths, int lines);
 
