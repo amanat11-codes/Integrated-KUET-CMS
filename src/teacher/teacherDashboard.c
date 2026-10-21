@@ -9,7 +9,6 @@
 #define TEACHER_DASHBOARD_LAST_CHOICE 4
 #define TEACHER_COURSE_NAME_LENGTH 12
 
-
 void teacherDashboard(const char *teacherId, const char *filepath)
 {
     TeacherFileHeader header;

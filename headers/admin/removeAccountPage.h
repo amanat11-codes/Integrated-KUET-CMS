@@ -1,0 +1,1 @@
+void removeAccountPage(UserType User);

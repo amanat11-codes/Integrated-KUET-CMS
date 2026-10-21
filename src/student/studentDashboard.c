@@ -40,7 +40,7 @@ void studentDashboard(const char *student_id, const char *filepath)
         switch (choice)
         {
             case 1:
-                studentProfilePage(student_id, filepath); // prepare db
+                studentProfilePage(student_id, filepath);
                 break;
             case 2:
                 academicInfoPage(student_id, filepath);

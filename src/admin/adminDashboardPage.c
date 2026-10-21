@@ -4,6 +4,9 @@
 #include "notifications.h"
 #include "adminDashboardPage.h"
 #include "removeNoticePage.h"
+#include "teacherRegistrationPage.h"
+#include "removeAccountPage.h"
+#include "studentRegistrationPage.h"
 #include "utility.h"
 
 #define LAST_CHOICE 9
@@ -44,22 +47,22 @@ void adminDashboard()
             noticesPage();
             break;
         case 4:
-            // addTeacherAccount();
+            teacherRegistrationPage();
             break;
         case 5:
             // updateTeacherAccount();
             break;
         case 6:
-            // removeTeacherAccount();
+            removeAccountPage(TEACHER);
             break;
         case 7:
-            // addStudentAccount();
+            studentRegistrationPage();
             break;
         case 8:
             // updateStudentAccount();
             break;
         case 9:
-            // removeStudentAccount();
+            removeAccountPage(STUDENT);
             break;
         default:
             getCharacter("Press ENTER to go back...\n");
