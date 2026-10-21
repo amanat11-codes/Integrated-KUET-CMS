@@ -6,48 +6,12 @@
 #include "utility.h"
 
 /* ---- Field size limits (max chars, excluding NUL) ---- */
-#define ID_MAX_LENGTH               8
-#define PASS_MAX_LENGTH             8
-#define NAME_MAX_LENGTH             79
-#define DEPARTMENT_MAX_LENGTH       49
-#define YEAR_MAX_LENGTH             11
-#define TERM_MAX_LENGTH             11
-#define PHONE_MAX_LENGTH            15
-#define EMAIL_MAX_LENGTH            79
-#define BLOOD_GROUP_MAX_LENGTH      3
-#define FATHERS_NAME_MAX_LENGTH     79
-#define MOTHERS_NAME_MAX_LENGTH     79
-#define PERM_ADDRESS_MAX_LENGTH     159
-#define CURR_ADDRESS_MAX_LENGTH     159
-#define ADVISOR_MAX_LENGTH          79
+#define ID_MAX_LENGTH 8
+#define PASS_MAX_LENGTH 8
 
 /* ---- Paths ---- */
-#define CREDENTIALS_PATH  "database/credentials.dat"
-#define STUDENTS_DIR      "database/students/"
-
-/* ------------------------------------------------------------------
- * isIdAlreadyRegistered
- * Opens credentials.dat and scans every User record for a matching
- * id string (regardless of user type).  Returns 1 if found, 0 if not.
- * ------------------------------------------------------------------ */
-static int isIdAlreadyRegistered(const char *id)
-{
-    FILE *cf = fopen(CREDENTIALS_PATH, "rb");
-    if (cf == NULL)
-        return 0; /* file absent: ID cannot be taken */
-
-    User u;
-    while (fread(&u, sizeof(User), 1, cf) == 1)
-    {
-        if (strcmp(u.id, id) == 0)
-        {
-            fclose(cf);
-            return 1;
-        }
-    }
-    fclose(cf);
-    return 0;
-}
+#define CREDENTIALS_PATH "database/credentials.dat"
+#define STUDENTS_DIR "database/students/"
 
 /* ------------------------------------------------------------------
  * studentRegistrationPage
@@ -61,18 +25,8 @@ void studentRegistrationPage(void)
     char confirmPass[PASS_MAX_LENGTH + 1];
 
     /* ---- Profile fields ---- */
-    char name[NAME_MAX_LENGTH + 1];
-    char department[DEPARTMENT_MAX_LENGTH + 1];
-    char year[YEAR_MAX_LENGTH + 1];
-    char term[TERM_MAX_LENGTH + 1];
-    char phone[PHONE_MAX_LENGTH + 1];
-    char email[EMAIL_MAX_LENGTH + 1];
-    char bloodGroup[BLOOD_GROUP_MAX_LENGTH + 1];
-    char fathersName[FATHERS_NAME_MAX_LENGTH + 1];
-    char mothersName[MOTHERS_NAME_MAX_LENGTH + 1];
-    char permanentAddress[PERM_ADDRESS_MAX_LENGTH + 1];
-    char currentAddress[CURR_ADDRESS_MAX_LENGTH + 1];
-    char advisor[ADVISOR_MAX_LENGTH + 1];
+    StudentProfile profile;
+    memset(&profile, 0, sizeof(profile));
 
     clearScreen();
 
@@ -86,18 +40,17 @@ void studentRegistrationPage(void)
     printf("  Step 1 of 3: Account Credentials\n");
     printf("----------------------------------------------------------------\n");
     printf("\n");
-    printf("  Student ID must be exactly %d characters (digits only).\n",
+    printf("  Student ID must be %d characters.\n",
            ID_MAX_LENGTH);
     printf("\n");
 
     while (1)
     {
-        getString("  Enter Student ID (8 digits): ", sizeof(studentId), studentId);
+        getString("  Enter Student ID (first 8 digits are taken): ", sizeof(studentId), studentId);
 
-        if ((int)strlen(studentId) != ID_MAX_LENGTH)
+        if (isAllDigits(studentId) == 0)
         {
-            printf("  [!] Student ID must be exactly %d characters. Try again.\n\n",
-                   ID_MAX_LENGTH);
+            printf("  [!] Student ID must contain only digits. Try again.\n\n");
             continue;
         }
 
@@ -107,22 +60,30 @@ void studentRegistrationPage(void)
             continue;
         }
 
-        break;
+        printf("  [?] Student ID: %s\n", studentId);
+        char ch = getCharacter("      Are you sure you want to use this ID? (Y/N): ");
+
+        if (ch == 'Y' || ch == 'y')
+            break;
+        else
+        {
+            printf("  [!] Please enter a different Student ID.\n\n");
+            continue;
+        }
     }
 
     /* ---- Step 2: Password (confirmed) ---- */
     printf("\n");
-    printf("  Password must be exactly %d characters.\n", PASS_MAX_LENGTH);
+    printf("  Password must be %d characters.\n", PASS_MAX_LENGTH);
     printf("\n");
 
     while (1)
     {
-        getString("  Enter Password (8 chars): ", sizeof(password), password);
+        getString("  Enter Password (first 8 characters are taken): ", sizeof(password), password);
 
-        if ((int)strlen(password) != PASS_MAX_LENGTH)
+        if (isAllDigits(password) == 0)
         {
-            printf("  [!] Password must be exactly %d characters. Try again.\n\n",
-                   PASS_MAX_LENGTH);
+            printf("  [!] Password must contain only digits. Try again.\n\n");
             continue;
         }
 
@@ -143,37 +104,84 @@ void studentRegistrationPage(void)
     printf("----------------------------------------------------------------\n");
     printf("\n");
 
-    getString("  Full Name: ", sizeof(name), name);
+    while (1)
+    {
+        getString("  \n\nFull Name: ", sizeof(profile.name), profile.name);
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
-    getString("  Department (e.g. Computer Science & Engineering): ",
-              sizeof(department), department);
+        if (ch == 'Y' || ch == 'y')
+            break;
 
-    getString("  Year (e.g. 1st Year): ", sizeof(year), year);
-
-    getString("  Term (e.g. 1st Term): ", sizeof(term), term);
-
-    getString("  Phone Number (e.g. 01XXXXXXXXX): ", sizeof(phone), phone);
+        printf("  [!] Please enter your full name again.\n\n");
+    }
 
     while (1)
     {
-        getString("  Email Address: ", sizeof(email), email);
-        if (validateEmailFormat(email, STUDENT) == 0)
+        getString("  \n\nDepartment (e.g. Computer Science & Engineering): ",
+                  sizeof(profile.department), profile.department);
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
+
+        if (ch == 'Y' || ch == 'y')
             break;
-        printf("  [!] Please enter a valid email containing '@'.\n\n");
+
+        printf("  [!] Please enter your department again.\n\n");
     }
 
-    getString("  Blood Group (e.g. A+, O-): ", sizeof(bloodGroup), bloodGroup);
+    while (1)
+    {
+        getString("  \n\nYear (e.g. 1st Year): ", sizeof(profile.year), profile.year);
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
-    getString("  Father's Name: ", sizeof(fathersName), fathersName);
+        if (ch == 'Y' || ch == 'y')
+            break;
 
-    getString("  Mother's Name: ", sizeof(mothersName), mothersName);
+        printf("  [!] Please enter your year again.\n\n");
+    }
 
-    getString("  Permanent Address: ", sizeof(permanentAddress), permanentAddress);
+    while (1)
+    {
+        getString("  \n\nTerm (e.g. 1st Term): ", sizeof(profile.term), profile.term);
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
-    getString("  Current Address: ", sizeof(currentAddress), currentAddress);
+        if (ch == 'Y' || ch == 'y')
+            break;
 
-    getString("  Academic Advisor (optional, press ENTER to skip): ",
-              sizeof(advisor), advisor);
+        printf("  [!] Please enter your term again.\n\n");
+    }
+
+    while (1)
+    {
+        getString("  \n\nPhone Number (e.g. 01XXXXXXXXX): ",
+                  sizeof(profile.phone), profile.phone);
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
+
+        if (ch == 'Y' || ch == 'y')
+            break;
+
+        printf("  [!] Please enter your phone number again.\n\n");
+    }
+
+    while (1)
+    {
+        getString("  \n\nEmail Address: ", sizeof(profile.email), profile.email);
+        if (validateEmailFormat(profile.email, STUDENT) == 0)
+        {
+            char ch = getCharacter("  [?] Is this correct? (Y/N): ");
+
+            if (ch == 'Y' || ch == 'y')
+                break;
+
+            printf("  [!] Please enter your email address again.\n\n");
+        }
+        else
+        {
+            printf("  [!] Please enter a valid email containing '@'.\n\n");
+        }
+    }
+
+    printf("  [!] Please fill out the following fields later in your profile after logging in.\n");
+    printMenuItems(9, "   Blood Group", "   Father's Name", "   Mother's Name", "   Permanent Address", "   Current Address", "   Academic Advisor", "   Academic Records", "   Hall Details", "   Library Details");
+    
 
     /* ---- Step 4: Write student file ---- */
     printf("\n");
@@ -183,32 +191,10 @@ void studentRegistrationPage(void)
     /* Build the file header — offsets are derived from struct sizes */
     StudentFileHeader hdr;
     memset(&hdr, 0, sizeof(hdr));
-    hdr.studentProfileOffset  = (uint32_t)sizeof(StudentFileHeader);
-    hdr.academicRecordOffset  = (uint32_t)(sizeof(StudentFileHeader)
-                                           + sizeof(StudentProfile));
-    hdr.hallDetailsOffset     = (uint32_t)(sizeof(StudentFileHeader)
-                                           + sizeof(StudentProfile)
-                                           + sizeof(AcademicRecord));
-    hdr.libraryDetailsOffset  = (uint32_t)(sizeof(StudentFileHeader)
-                                           + sizeof(StudentProfile)
-                                           + sizeof(AcademicRecord)
-                                           + sizeof(HallDetails));
-
-    /* Build the student profile */
-    StudentProfile profile;
-    memset(&profile, 0, sizeof(profile));
-    strncpy(profile.name,             name,             sizeof(profile.name)             - 1);
-    strncpy(profile.department,       department,       sizeof(profile.department)       - 1);
-    strncpy(profile.year,             year,             sizeof(profile.year)             - 1);
-    strncpy(profile.term,             term,             sizeof(profile.term)             - 1);
-    strncpy(profile.phone,            phone,            sizeof(profile.phone)            - 1);
-    strncpy(profile.email,            email,            sizeof(profile.email)            - 1);
-    strncpy(profile.bloodGroup,       bloodGroup,       sizeof(profile.bloodGroup)       - 1);
-    strncpy(profile.fathersName,      fathersName,      sizeof(profile.fathersName)      - 1);
-    strncpy(profile.mothersName,      mothersName,      sizeof(profile.mothersName)      - 1);
-    strncpy(profile.permanentAddress, permanentAddress, sizeof(profile.permanentAddress) - 1);
-    strncpy(profile.currentAddress,   currentAddress,   sizeof(profile.currentAddress)   - 1);
-    strncpy(profile.advisor,          advisor,          sizeof(profile.advisor)          - 1);
+    hdr.studentProfileOffset = (uint32_t)sizeof(StudentFileHeader);
+    hdr.academicRecordOffset = (uint32_t)(sizeof(StudentFileHeader) + sizeof(StudentProfile));
+    hdr.hallDetailsOffset = (uint32_t)(sizeof(StudentFileHeader) + sizeof(StudentProfile) + sizeof(AcademicRecord));
+    hdr.libraryDetailsOffset = (uint32_t)(sizeof(StudentFileHeader) + sizeof(StudentProfile) + sizeof(AcademicRecord) + sizeof(HallDetails));
 
     /* Zero-initialise remaining sections (academic, hall, library) */
     AcademicRecord academic;
@@ -233,11 +219,11 @@ void studentRegistrationPage(void)
         return;
     }
 
-    int writeOk = (fwrite(&hdr,      sizeof(hdr),      1, fp) == 1) &&
-                  (fwrite(&profile,  sizeof(profile),  1, fp) == 1) &&
+    int writeOk = (fwrite(&hdr, sizeof(hdr), 1, fp) == 1) &&
+                  (fwrite(&profile, sizeof(profile), 1, fp) == 1) &&
                   (fwrite(&academic, sizeof(academic), 1, fp) == 1) &&
-                  (fwrite(&hall,     sizeof(hall),     1, fp) == 1) &&
-                  (fwrite(&library,  sizeof(library),  1, fp) == 1);
+                  (fwrite(&hall, sizeof(hall), 1, fp) == 1) &&
+                  (fwrite(&library, sizeof(library), 1, fp) == 1);
     fclose(fp);
 
     if (!writeOk)
@@ -248,12 +234,14 @@ void studentRegistrationPage(void)
     }
 
     /* Append credentials record */
+    // Create a User struct for the new student
     User user;
     memset(&user, 0, sizeof(user));
-    strncpy(user.id,   studentId, sizeof(user.id)   - 1);
-    strncpy(user.pass, password,  sizeof(user.pass)  - 1);
+    strncpy(user.id, studentId, sizeof(user.id) - 1);
+    strncpy(user.pass, password, sizeof(user.pass) - 1);
     user.type = STUDENT;
 
+    // Append to the credentials file
     FILE *cf = fopen(CREDENTIALS_PATH, "ab");
     if (cf == NULL)
     {
@@ -279,11 +267,9 @@ void studentRegistrationPage(void)
     printf("================================================================\n");
     printf("\n");
     printf("  Student ID : %s\n", studentId);
-    printf("  Name       : %s\n", name);
+    printf("  Name       : %s\n", profile.name);
     printf("\n");
     printf("  You can now log in through the Login Portal.\n");
-    printf("  Note: Academic, Hall, and Library records will be populated\n");
-    printf("        by an administrator.\n");
     printf("\n");
 
     getCharacter("  Press ENTER to return to the Registration Portal...");

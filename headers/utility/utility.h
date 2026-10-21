@@ -42,6 +42,8 @@ void getFilePathForUserType(char *id, UserType userType, char *filepath);
 char* showDate(Date date);
 void printAppHeader();
 int validateEmailFormat(const char *email, UserType userType);
+int isIdAlreadyRegistered(const char *id);
+int isAllDigits(const char *str);
 
 //void multiLineBoxedText(int lines, ...);
 //int findMaximum(int *lineLengths, int lines);

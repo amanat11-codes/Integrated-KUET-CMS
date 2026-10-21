@@ -6,42 +6,18 @@
 #include "utility.h"
 
 /* ---- Field size limits (max chars, excluding NUL) ---- */
-#define ID_MAX_LENGTH               8
-#define PASS_MAX_LENGTH             8
-#define NAME_MAX_LENGTH             79
-#define DESIGNATION_MAX_LENGTH      19
-#define DEPARTMENT_MAX_LENGTH       49
-#define PHONE_MAX_LENGTH            15
-#define EMAIL_MAX_LENGTH            79
-#define RESEARCH_MAX_LENGTH         159
+#define ID_MAX_LENGTH 8
+#define PASS_MAX_LENGTH 8
+#define NAME_MAX_LENGTH 79
+#define DESIGNATION_MAX_LENGTH 19
+#define DEPARTMENT_MAX_LENGTH 49
+#define PHONE_MAX_LENGTH 15
+#define EMAIL_MAX_LENGTH 79
+#define RESEARCH_MAX_LENGTH 159
 
 /* ---- Paths ---- */
-#define CREDENTIALS_PATH  "database/credentials.dat"
-#define TEACHERS_DIR      "database/teachers/"
-
-/* ------------------------------------------------------------------
- * isIdAlreadyRegistered
- * Opens credentials.dat and scans every User record for a matching
- * id string (regardless of user type).  Returns 1 if found, 0 if not.
- * ------------------------------------------------------------------ */
-static int isIdAlreadyRegistered(const char *id)
-{
-    FILE *cf = fopen(CREDENTIALS_PATH, "rb");
-    if (cf == NULL)
-        return 0; /* file absent: ID cannot be taken */
-
-    User u;
-    while (fread(&u, sizeof(User), 1, cf) == 1)
-    {
-        if (strcmp(u.id, id) == 0)
-        {
-            fclose(cf);
-            return 1;
-        }
-    }
-    fclose(cf);
-    return 0;
-}
+#define CREDENTIALS_PATH "database/credentials.dat"
+#define TEACHERS_DIR "database/teachers/"
 
 /* ------------------------------------------------------------------
  * teacherRegistrationPage
@@ -60,7 +36,6 @@ void teacherRegistrationPage(void)
     char department[DEPARTMENT_MAX_LENGTH + 1];
     char phone[PHONE_MAX_LENGTH + 1];
     char email[EMAIL_MAX_LENGTH + 1];
-    char research[RESEARCH_MAX_LENGTH + 1];
 
     clearScreen();
 
@@ -74,18 +49,17 @@ void teacherRegistrationPage(void)
     printf("  Step 1 of 3: Account Credentials\n");
     printf("----------------------------------------------------------------\n");
     printf("\n");
-    printf("  Teacher ID must be exactly %d characters (digits only).\n",
+    printf("  Teacher ID must be %d characters.\n",
            ID_MAX_LENGTH);
     printf("\n");
 
     while (1)
     {
-        getString("  Enter Teacher ID (8 digits): ", sizeof(teacherId), teacherId);
+        getString("  Enter Teacher ID (first 8 digits are taken): ", sizeof(teacherId), teacherId);
 
-        if ((int)strlen(teacherId) != ID_MAX_LENGTH)
+        if (isAllDigits(teacherId) == 0)
         {
-            printf("  [!] Teacher ID must be exactly %d characters. Try again.\n\n",
-                   ID_MAX_LENGTH);
+            printf("  [!] Teacher ID must contain only digits. Try again.\n\n");
             continue;
         }
 
@@ -95,22 +69,30 @@ void teacherRegistrationPage(void)
             continue;
         }
 
-        break;
+        printf("Teacher ID: %s\n", teacherId);
+        char ch = getCharacter("Are you sure you want to use this ID? (Y/N): ");
+
+        if (ch == 'Y' || ch == 'y')
+            break;
+        else
+        {
+            printf("  [!] Please enter a different Teacher ID.\n\n");
+            continue;
+        }
     }
 
     /* ---- Step 2: Password (confirmed) ---- */
     printf("\n");
-    printf("  Password must be exactly %d characters.\n", PASS_MAX_LENGTH);
+    printf("  Password must be %d characters.\n", PASS_MAX_LENGTH);
     printf("\n");
 
     while (1)
     {
-        getString("  Enter Password (8 chars): ", sizeof(password), password);
+        getString("  Enter Password (first 8 characters are taken): ", sizeof(password), password);
 
-        if ((int)strlen(password) != PASS_MAX_LENGTH)
+        if (isAllDigits(password) == 0)
         {
-            printf("  [!] Password must be exactly %d characters. Try again.\n\n",
-                   PASS_MAX_LENGTH);
+            printf("  [!] Password must contain only digits. Try again.\n\n");
             continue;
         }
 
@@ -131,27 +113,73 @@ void teacherRegistrationPage(void)
     printf("----------------------------------------------------------------\n");
     printf("\n");
 
-    getString("  Full Name: ", sizeof(name), name);
+    while (1)
+    {
+        getString("  Full Name: ", sizeof(name), name);
+        printf("  You entered: %s\n", name);
+        char ch = getCharacter("  Is this correct? (Y/N): ");
+        if (ch == 'Y' || ch == 'y')
+            break;
+        else
+            printf("  [!] Please enter your full name again.\n\n");
+    }
 
-    getString("  Designation (e.g. Professor, Lecturer): ",
-              sizeof(designation), designation);
+    while (1)
+    {
+        getString("  Designation (e.g. Professor, Lecturer): ",
+                  sizeof(designation), designation);
+        printf("  You entered: %s\n", designation);
+        char ch = getCharacter("  Is this correct? (Y/N): ");
+        if (ch == 'Y' || ch == 'y')
+            break;
+        else
+            printf("  [!] Please enter your designation again.\n\n");
+    }
 
-    getString("  Department (e.g. Computer Science & Engineering): ",
-              sizeof(department), department);
+    while (1)
+    {
+        getString("  Department (e.g. Computer Science & Engineering): ",
+                  sizeof(department), department);
+        printf("  You entered: %s\n", department);
+        char ch = getCharacter("  Is this correct? (Y/N): ");
+        if (ch == 'Y' || ch == 'y')
+            break;
+        else
+            printf("  [!] Please enter your department again.\n\n");
+    }
 
-    getString("  Phone Number (e.g. 01XXXXXXXXX): ",
-              sizeof(phone), phone);
+    while (1)
+    {
+        getString("  Phone Number (e.g. 01XXXXXXXXX): ",
+                  sizeof(phone), phone);
+        printf("  You entered: %s\n", phone);
+        char ch = getCharacter("  Is this correct? (Y/N): ");
+        if (ch == 'Y' || ch == 'y')
+            break;
+        else
+            printf("  [!] Please enter your phone number again.\n\n");
+    }
 
     while (1)
     {
         getString("  Email Address: ", sizeof(email), email);
         if (validateEmailFormat(email, TEACHER) == 0)
-            break;
+        {
+            printf("  You entered: %s\n", email);
+            char ch = getCharacter("  Is this correct? (Y/N): ");
+            if (ch == 'Y' || ch == 'y')
+                break;
+            else
+            {
+                printf("  [!] Please enter your email address again.\n\n");
+                continue;
+            }
+        }
         printf("  [!] Please enter a valid email containing '@'.\n\n");
     }
 
-    printf("  Research Specialization (optional, press ENTER to skip): ");
-    getString("", sizeof(research), research);
+    printf("Please fill out the following fields later in your profile after logging in.\n");
+    printMenuItems(4, "Research Specialization", "Course 1", "Course 2", "Course 3");
 
     /* ---- Step 4: Write teacher file ---- */
     printf("\n");
@@ -162,20 +190,21 @@ void teacherRegistrationPage(void)
     TeacherFileHeader hdr;
     memset(&hdr, 0, sizeof(hdr));
     hdr.teacherProfileOffset = (uint32_t)sizeof(TeacherFileHeader);
-    hdr.taughtCoursesOffset  = (uint32_t)(sizeof(TeacherFileHeader)
-                                          + sizeof(TeacherProfile));
-    hdr.taughtCourseCount    = 0;
+    hdr.taughtCoursesOffset = (uint32_t)(sizeof(TeacherFileHeader) + sizeof(TeacherProfile));
+    hdr.taughtCourseCount = 0;
 
     /* Build the profile */
     TeacherProfile profile;
     memset(&profile, 0, sizeof(profile));
-    strncpy(profile.name,                  name,        sizeof(profile.name)                  - 1);
-    strncpy(profile.teacherId,             teacherId,   sizeof(profile.teacherId)              - 1);
-    strncpy(profile.designation,           designation, sizeof(profile.designation)            - 1);
-    strncpy(profile.department,            department,  sizeof(profile.department)             - 1);
-    strncpy(profile.phone,                 phone,       sizeof(profile.phone)                  - 1);
-    strncpy(profile.email,                 email,       sizeof(profile.email)                  - 1);
-    strncpy(profile.researchSpecialization, research,   sizeof(profile.researchSpecialization) - 1);
+    strncpy(profile.name, name, sizeof(profile.name) - 1);
+    strncpy(profile.teacherId, teacherId, sizeof(profile.teacherId) - 1);
+    strncpy(profile.designation, designation, sizeof(profile.designation) - 1);
+    strncpy(profile.department, department, sizeof(profile.department) - 1);
+    strncpy(profile.phone, phone, sizeof(profile.phone) - 1);
+    strncpy(profile.email, email, sizeof(profile.email) - 1);
+
+    TaughtCourse courses[3];
+    memset(courses, 0, sizeof(courses));
 
     /* Create the teacher file */
     char filepath[256];
@@ -190,8 +219,9 @@ void teacherRegistrationPage(void)
         return;
     }
 
-    int writeOk = (fwrite(&hdr,     sizeof(hdr),     1, fp) == 1) &&
-                  (fwrite(&profile, sizeof(profile), 1, fp) == 1);
+    int writeOk = (fwrite(&hdr, sizeof(hdr), 1, fp) == 1) &&
+                  (fwrite(&profile, sizeof(profile), 1, fp) == 1) &&
+                  (fwrite(courses, sizeof(courses), 1, fp) == 1);
     fclose(fp);
 
     if (!writeOk)
@@ -202,12 +232,14 @@ void teacherRegistrationPage(void)
     }
 
     /* Append credentials record */
+    // Create a User struct for the new teacher
     User user;
     memset(&user, 0, sizeof(user));
-    strncpy(user.id,   teacherId, sizeof(user.id)   - 1);
-    strncpy(user.pass, password,  sizeof(user.pass)  - 1);
+    strncpy(user.id, teacherId, sizeof(user.id) - 1);
+    strncpy(user.pass, password, sizeof(user.pass) - 1);
     user.type = TEACHER;
 
+    // Append to the credentials file
     FILE *cf = fopen(CREDENTIALS_PATH, "ab");
     if (cf == NULL)
     {

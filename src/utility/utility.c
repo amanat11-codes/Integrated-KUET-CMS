@@ -4,6 +4,8 @@
 #include <string.h>
 #include <stdarg.h>
 
+#define CREDENTIALS_PATH  "database/credentials.dat"
+
 const int PADDING = 2;
 
 const char *department_short_names[] = {
@@ -17,6 +19,8 @@ int getInt(char *prompt)
 
     while (scanf("%d", &value) != 1)
     {
+        if (feof(stdin))
+            return 0;
         printf("Invalid input. Please enter an integer: ");
         while (getchar() != '\n')
             ; // Clear the input buffer
@@ -33,6 +37,11 @@ void getString(char *prompt, int maxLength, char *dest)
     printf("%s", prompt);
     while (fgets(buffer, maxLength, stdin) == NULL)
     {
+        if (feof(stdin))
+        {
+            dest[0] = '\0';
+            return;
+        }
         printf("\nInvalid input. Please enter a string: ");
     }
 
@@ -51,7 +60,15 @@ char getCharacter(char *prompt)
 {
     printf("%s", prompt);
     char ch;
-    scanf("%c", &ch);
+    if (scanf("%c", &ch) != 1)
+    {
+        return '\n';
+    }
+    if (ch != '\n')
+    {
+        while (getchar() != '\n' && !feof(stdin))
+            ;
+    }
     return ch;
 }
 
@@ -200,6 +217,7 @@ void multiLineBoxedText(int lines, ...)
     va_end(copy);
 
     // Print the top border of the box
+
     int lenX = maxLength + 2 * PADDING + 1; // Add padding for the sides
 
     printf(".");
@@ -254,6 +272,40 @@ int validateEmailFormat(const char *email, UserType userType)
     return 0;
 }
 
+int isIdAlreadyRegistered(const char *id)
+{
+    FILE *cf = fopen(CREDENTIALS_PATH, "rb");
+    if (cf == NULL)
+        return 0; /* file absent: ID cannot be taken */
+
+    User u;
+    while (fread(&u, sizeof(User), 1, cf) == 1)
+    {
+        if (strcmp(u.id, id) == 0)
+        {
+            fclose(cf);
+            return 1;
+        }
+    }
+    fclose(cf);
+    return 0;
+}
+
+
+int isAllDigits(const char *str)
+{
+    if (str == NULL || str[0] == '\0')
+        return 0;
+    int i = 0;
+    int len = strlen(str);
+    while (i < len)
+    {
+        if (str[i] < '0' || str[i] > '9')
+            return 0;
+        i++;
+    }
+    return 1;
+}
 void clearScreen()
 {
     system("cls");
