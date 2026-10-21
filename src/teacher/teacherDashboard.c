@@ -1,12 +1,18 @@
 #include <stdio.h>
-#include "utility.h"
+#include <stdint.h>
+#include <limits.h>
 #include "teacherProfilePage.h"
+#include "updateMarks.h"
+#include "utility.h"
 #include "updatePersonalInfo.h"
 
-#define TEACHER_DASHBOARD_LAST_CHOICE 2
+#define TEACHER_DASHBOARD_LAST_CHOICE 4
+#define TEACHER_COURSE_NAME_LENGTH 12
+
 
 void teacherDashboard(const char *teacherId, const char *filepath)
 {
+    TeacherFileHeader header;
     TeacherProfile record;
     FILE *fp = fopen(filepath, "rb+");
     if (fp == NULL)
@@ -14,9 +20,17 @@ void teacherDashboard(const char *teacherId, const char *filepath)
         printf("Error opening file: %s\n", filepath);
         return;
     }
-    if (fread(&record, sizeof(TeacherProfile), 1, fp) != 1)
+    if (fread(&header, sizeof(header), 1, fp) != 1)
     {
-        printf("Error reading file: %s\n", filepath);
+        printf("Error reading teacher file header: %s\n", filepath);
+        fclose(fp);
+        return;
+    }
+
+    if (fseek(fp, (long)header.teacherProfileOffset, SEEK_SET) != 0 ||
+        fread(&record, sizeof(record), 1, fp) != 1)
+    {
+        printf("Error reading teacher profile: %s\n", filepath);
         fclose(fp);
         return;
     }
@@ -24,13 +38,13 @@ void teacherDashboard(const char *teacherId, const char *filepath)
     while (1)
     {
         clearScreen();
-        printf("Got teacher ID: %s\n", teacherId);
-        printf("Got filepath: %s\n", filepath);
         printBoxedText("TEACHER DASHBOARD PANEL");
         printMenuItems(
             TEACHER_DASHBOARD_LAST_CHOICE,
             "Personal Information",
-            "Update Personal Information");
+            "Update Personal Information",
+            "Update CT Marks",
+            "Update Term Exam Marks");
         printf("0. Quit\n");
 
         int choice = getInt("> ");
@@ -60,16 +74,20 @@ void teacherDashboard(const char *teacherId, const char *filepath)
             break;
         case 2:
             TeacherProfile updatedProfile = updatePersonalInfo(&record, teacherId, filepath);
-            if (fseek(fp, 0, SEEK_SET) != 0 ||
+            if (fseek(fp, (long)header.teacherProfileOffset, SEEK_SET) != 0 ||
                 fwrite(&updatedProfile, sizeof(updatedProfile), 1, fp) != 1 ||
                 fflush(fp) != 0)
             {
                 printf("Error writing updated profile to file: %s\n", filepath);
             }
             else
-            {
                 record = updatedProfile;
-            }
+            break;
+        case 3:
+            updateCTMarks(fp, &header);
+            break;
+        case 4:
+            printf("Update Term Exam Marks functionality is not implemented yet.\n");
             break;
         default:
             printf("Invalid choice. Please try again.\n");

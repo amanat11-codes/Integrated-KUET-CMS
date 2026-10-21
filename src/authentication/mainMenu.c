@@ -7,6 +7,7 @@
 #include "noticesPage.h"
 #include "utility.h"
 #include "loginPortal.h"
+#include "registrationPortal.h"
 
 #define CHOICE_LAST 3
 
@@ -87,7 +88,7 @@ void mainMenu()
             break;
 
         case 2:
-            // registrationPortal();
+            registrationPortal();
             break;
 
         case 3:

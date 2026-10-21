@@ -9,6 +9,8 @@ typedef struct {
     char courseTitle[30];
     float gradePoint;
     float courseCredit;
+    float ctMarks;
+    float termExamMarks;
     char letterGrade[3];
 } Course;
 

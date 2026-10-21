@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "utility.h"
 #include "teacherProfilePage.h"
+
 
 void showTeacherProfile(const TeacherProfile *record,
                                const char *teacherId)
@@ -14,7 +16,7 @@ void showTeacherProfile(const TeacherProfile *record,
     printf("Department             %s\n", record->department);
     printf("Phone                  %s\n", record->phone);
     printf("Email                  %s\n", record->email);
-    printf("Research interest     %s\n", record->researchInterest);
+    printf("Research interest     %s\n", record->researchSpecialization);
 }
 
 void teacherProfilePage(const char *teacherId, const char *filepath)
@@ -25,6 +27,19 @@ void teacherProfilePage(const char *teacherId, const char *filepath)
         clearScreen();
         printBoxedText("TEACHER PROFILE PAGE");
         printf("Error opening file: %s\n", filepath);
+        getCharacter("Press ENTER to return to the teacher dashboard...");
+        return;
+    }
+
+    TeacherFileHeader header;
+    if (fread(&header, sizeof(header), 1, fp) != 1 ||
+        header.teacherProfileOffset < sizeof(header) ||
+        fseek(fp, (long)header.teacherProfileOffset, SEEK_SET) != 0)
+    {
+        clearScreen();
+        printBoxedText("TEACHER PROFILE PAGE");
+        printf("Error reading teacher file header: %s\n", filepath);
+        fclose(fp);
         getCharacter("Press ENTER to return to the teacher dashboard...");
         return;
     }

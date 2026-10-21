@@ -68,16 +68,15 @@ void updateResearchInterest(TeacherProfile *record)
 {
     char *newResearchInterest = malloc(RESEARCH_INTEREST_MAX_LENGTH * sizeof(char));
     getString("Enter new research interest: ", RESEARCH_INTEREST_MAX_LENGTH, newResearchInterest);
-    strcpy(record->researchInterest, newResearchInterest);
-    printf("Updated research interest: %s\n", record->researchInterest);
+    strcpy(record->researchSpecialization, newResearchInterest);
+    printf("Updated research interest: %s\n", record->researchSpecialization);
     free(newResearchInterest);
 }
 
 TeacherProfile updatePersonalInfo(TeacherProfile *record, const char *teacher_id, const char *filepath)
 {
+    (void)filepath;
     clearScreen();
-    printf("Got teacher ID: %s\n", teacher_id);
-    printf("Got filepath: %s\n", filepath);
     printBoxedText("UPDATE PERSONAL INFORMATION");
     printUnderlinedText("Current Information:\n");
 
