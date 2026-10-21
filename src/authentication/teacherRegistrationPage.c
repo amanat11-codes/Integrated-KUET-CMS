@@ -57,9 +57,9 @@ void teacherRegistrationPage(void)
     {
         getString("  Enter Teacher ID (first 8 digits are taken): ", sizeof(teacherId), teacherId);
 
-        if (isAllDigits(teacherId) == 0)
+        if (teacherId[0] == '\0' || isAllDigits(teacherId) == 0)
         {
-            printf("  [!] Teacher ID must contain only digits. Try again.\n\n");
+            printf("  [!] Teacher ID must contain only digits and cannot be empty. Try again.\n\n");
             continue;
         }
 
@@ -90,9 +90,9 @@ void teacherRegistrationPage(void)
     {
         getString("  Enter Password (first 8 characters are taken): ", sizeof(password), password);
 
-        if (isAllDigits(password) == 0)
+        if (password[0] == '\0' || isAllDigits(password) == 0)
         {
-            printf("  [!] Password must contain only digits. Try again.\n\n");
+            printf("  [!] Password must contain only digits and cannot be empty. Try again.\n\n");
             continue;
         }
 
@@ -115,9 +115,8 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  Full Name: ", sizeof(name), name);
-        printf("  You entered: %s\n", name);
-        char ch = getCharacter("  Is this correct? (Y/N): ");
+        getString("  \n\nFull Name: ", sizeof(name), name);
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
             break;
         else
@@ -126,10 +125,9 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  Designation (e.g. Professor, Lecturer): ",
+        getString("  \n\nDesignation (e.g. Professor, Lecturer): ",
                   sizeof(designation), designation);
-        printf("  You entered: %s\n", designation);
-        char ch = getCharacter("  Is this correct? (Y/N): ");
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
             break;
         else
@@ -138,10 +136,9 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  Department (e.g. Computer Science & Engineering): ",
+        getString("  \n\nDepartment (e.g. Computer Science & Engineering): ",
                   sizeof(department), department);
-        printf("  You entered: %s\n", department);
-        char ch = getCharacter("  Is this correct? (Y/N): ");
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
             break;
         else
@@ -150,10 +147,9 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  Phone Number (e.g. 01XXXXXXXXX): ",
+        getString("  \n\nPhone Number (e.g. 01XXXXXXXXX): ",
                   sizeof(phone), phone);
-        printf("  You entered: %s\n", phone);
-        char ch = getCharacter("  Is this correct? (Y/N): ");
+        char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
             break;
         else
@@ -162,11 +158,10 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  Email Address: ", sizeof(email), email);
+        getString("  \n\nEmail Address: ", sizeof(email), email);
         if (validateEmailFormat(email, TEACHER) == 0)
         {
-            printf("  You entered: %s\n", email);
-            char ch = getCharacter("  Is this correct? (Y/N): ");
+            char ch = getCharacter("  [?] Is this correct? (Y/N): ");
             if (ch == 'Y' || ch == 'y')
                 break;
             else
@@ -222,10 +217,12 @@ void teacherRegistrationPage(void)
     int writeOk = (fwrite(&hdr, sizeof(hdr), 1, fp) == 1) &&
                   (fwrite(&profile, sizeof(profile), 1, fp) == 1) &&
                   (fwrite(courses, sizeof(courses), 1, fp) == 1);
-    fclose(fp);
+    if (fclose(fp) != 0)
+        writeOk = 0;
 
     if (!writeOk)
     {
+        remove(filepath);
         printf("  [!] Error writing teacher file. Registration aborted.\n");
         getCharacter("\n  Press ENTER to return...");
         return;
@@ -244,16 +241,18 @@ void teacherRegistrationPage(void)
     if (cf == NULL)
     {
         printf("  [!] Error: Could not open credentials file.\n");
-        printf("      Teacher file was created but credentials were NOT saved.\n");
+        printf("      Teacher file was not retained because credentials were NOT saved.\n");
         getCharacter("\n  Press ENTER to return...");
         return;
     }
 
-    int credOk = (fwrite(&user, sizeof(User), 1, cf) == 1);
-    fclose(cf);
+    int credOk = (fwrite(&user, sizeof(user), 1, cf) == 1);
+    if (fclose(cf) != 0)
+        credOk = 0;
 
     if (!credOk)
     {
+        remove(filepath);
         printf("  [!] Error writing credentials. Please contact an administrator.\n");
         getCharacter("\n  Press ENTER to return...");
         return;

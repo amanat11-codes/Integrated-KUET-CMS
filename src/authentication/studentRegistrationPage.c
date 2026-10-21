@@ -48,9 +48,9 @@ void studentRegistrationPage(void)
     {
         getString("  Enter Student ID (first 8 digits are taken): ", sizeof(studentId), studentId);
 
-        if (isAllDigits(studentId) == 0)
+        if (studentId[0] == '\0' || isAllDigits(studentId) == 0)
         {
-            printf("  [!] Student ID must contain only digits. Try again.\n\n");
+            printf("  [!] Student ID must contain only digits and cannot be empty. Try again.\n\n");
             continue;
         }
 
@@ -81,9 +81,9 @@ void studentRegistrationPage(void)
     {
         getString("  Enter Password (first 8 characters are taken): ", sizeof(password), password);
 
-        if (isAllDigits(password) == 0)
+        if (password[0] == '\0' || isAllDigits(password) == 0)
         {
-            printf("  [!] Password must contain only digits. Try again.\n\n");
+            printf("  [!] Password must contain only digits and cannot be empty. Try again.\n\n");
             continue;
         }
 
@@ -224,10 +224,12 @@ void studentRegistrationPage(void)
                   (fwrite(&academic, sizeof(academic), 1, fp) == 1) &&
                   (fwrite(&hall, sizeof(hall), 1, fp) == 1) &&
                   (fwrite(&library, sizeof(library), 1, fp) == 1);
-    fclose(fp);
+    if (fclose(fp) != 0)
+        writeOk = 0;
 
     if (!writeOk)
     {
+        remove(filepath);
         printf("  [!] Error writing student file. Registration aborted.\n");
         getCharacter("\n  Press ENTER to return...");
         return;
@@ -251,11 +253,13 @@ void studentRegistrationPage(void)
         return;
     }
 
-    int credOk = (fwrite(&user, sizeof(User), 1, cf) == 1);
-    fclose(cf);
+    int credOk = (fwrite(&user, sizeof(user), 1, cf) == 1);
+    if (fclose(cf) != 0)
+        credOk = 0;
 
     if (!credOk)
     {
+        remove(filepath);
         printf("  [!] Error writing credentials. Please contact an administrator.\n");
         getCharacter("\n  Press ENTER to return...");
         return;
