@@ -388,6 +388,13 @@ static void setMealOffPeriod(const char *filepath)
 {
     char startDate[32];
     char endDate[32];
+    char today[11];
+
+    if (!getTodayDateString(today, sizeof(today))) {
+        printf("\n[ERROR] Could not determine today's date.\n");
+        getCharacter("\nPress ENTER to return...");
+        return;
+    }
 
     while (1) {
         clearScreen();
@@ -396,19 +403,25 @@ static void setMealOffPeriod(const char *filepath)
         printf("\nDate format: DD-MM-YYYY\n");
         printf("Enter 0 at either prompt to cancel.\n\n");
 
-        if (!readLine("Enter start date: ",
+        if (!readLine("Enter date (dd-mm-yyyy; leave blank for today's date): ",
                       startDate, sizeof(startDate)))
             continue;
 
         if (strcmp(startDate, "0") == 0)
             return;
 
-        if (!readLine("Enter end date: ",
+        if (startDate[0] == '\0')
+            strcpy(startDate, today);
+
+        if (!readLine("Enter date (dd-mm-yyyy; leave blank for today's date): ",
                       endDate, sizeof(endDate)))
             continue;
 
         if (strcmp(endDate, "0") == 0)
             return;
+
+        if (endDate[0] == '\0')
+            strcpy(endDate, today);
 
         if (!validateMealOffDates(startDate, endDate)) {
             getCharacter("\nPress ENTER to try again...");
@@ -607,4 +620,3 @@ void hallDetailsPage(
         }
     }
 }
-

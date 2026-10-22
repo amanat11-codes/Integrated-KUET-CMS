@@ -63,7 +63,7 @@ void removeAccountPage(UserType User)
     clearScreen();
     char id[9]; // Assuming IDs are 8 characters long + null terminator
     char filepath[256];
-    char prompt[] = "Are you sure you want to remove this account? (Y/N): ";
+    char prompt[] = "[?] Are you sure you want to remove this account? (Y/N): ";
     char ch;
     switch (User)
     {

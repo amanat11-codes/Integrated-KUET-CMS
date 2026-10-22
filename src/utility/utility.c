@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <time.h>
 
 #define CREDENTIALS_PATH  "database/credentials.dat"
 
@@ -176,6 +177,23 @@ char *showDate(Date date)
     static char dateString[11]; // Buffer to hold the formatted date string
     snprintf(dateString, sizeof(dateString), "%02d-%02d-%04d", date.day, date.month, date.year);
     return dateString;
+}
+
+int getTodayDateString(char *dest, size_t destSize)
+{
+    time_t now = time(NULL);
+    struct tm *local = localtime(&now);
+
+    if (dest == NULL || destSize < 11 || local == NULL)
+        return 0;
+
+    if (strftime(dest, destSize, "%d-%m-%Y", local) == 0)
+    {
+        dest[0] = '\0';
+        return 0;
+    }
+
+    return 1;
 }
 
 void printAppHeader()

@@ -90,10 +90,18 @@ void addNotice()
     
     Notice notice;
     char ch;
+    char today[11];
+
+    if (!getTodayDateString(today, sizeof(today)))
+    {
+        printf("Unable to determine today's date.\n");
+        getCharacter("Press ENTER to continue...");
+        return;
+    }
     
     while (1)
     {
-        ch = getCharacter("Do you want to add a new notice? (Y/N): ");
+        ch = getCharacter("[?] Do you want to add a new notice? (Y/N): ");
         if (ch == 'N' || ch == 'n')
             return;
         else if (ch != 'Y' && ch != 'y')
@@ -129,7 +137,11 @@ void addNotice()
 
         while (1)
         {
-            getString("Enter date: ", MAX_DATE_LENGTH, date);
+            getString("Enter date (dd-mm-yyyy; leave blank for today's date): ",
+                      MAX_DATE_LENGTH, date);
+            if (date[0] == '\0')
+                snprintf(date, sizeof(date), "%s", today);
+
             if (parseDate(date, &dd, &mm, &yyyy))
             {
                 notice.date.day = dd;

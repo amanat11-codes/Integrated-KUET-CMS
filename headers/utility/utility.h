@@ -2,6 +2,7 @@
 #define UTILITY_H
 
 #include <stdio.h>
+#include <stddef.h>
 
 typedef enum
 {
@@ -40,6 +41,7 @@ void printMenuItems(int count, ...);
 LoginStatus credentialsValidation(const char *id, const char *password, UserType usertype, int idMaxLength, int passMaxLength, FILE *credentialsFile);
 void getFilePathForUserType(char *id, UserType userType, char *filepath);
 char* showDate(Date date);
+int getTodayDateString(char *dest, size_t destSize);
 void printAppHeader();
 int validateEmailFormat(const char *email, UserType userType);
 int isIdAlreadyRegistered(const char *id);

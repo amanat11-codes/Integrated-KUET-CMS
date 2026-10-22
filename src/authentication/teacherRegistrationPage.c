@@ -70,7 +70,7 @@ void teacherRegistrationPage(void)
         }
 
         printf("Teacher ID: %s\n", teacherId);
-        char ch = getCharacter("Are you sure you want to use this ID? (Y/N): ");
+        char ch = getCharacter("  [?] Are you sure you want to use this ID? (Y/N): ");
 
         if (ch == 'Y' || ch == 'y')
             break;

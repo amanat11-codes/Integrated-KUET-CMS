@@ -5,11 +5,10 @@
 #include "adminDashboardPage.h"
 #include "removeNoticePage.h"
 #include "teacherRegistrationPage.h"
-#include "removeAccountPage.h"
 #include "studentRegistrationPage.h"
 #include "utility.h"
 
-#define LAST_CHOICE 9
+#define LAST_CHOICE 5
 
 void adminDashboard()
 {
@@ -22,11 +21,7 @@ void adminDashboard()
                        "Remove notice",
                        "View notices",
                        "Add Teacher account",
-                       "Update Teacher account",
-                       "Remove Teacher account",
-                       "Add Student account",
-                       "Update Student account",
-                       "Remove Student account");
+                       "Add Student account");
         printf("0. Quit\n");
 
         int choice;
@@ -50,19 +45,7 @@ void adminDashboard()
             teacherRegistrationPage();
             break;
         case 5:
-            // updateTeacherAccount();
-            break;
-        case 6:
-            removeAccountPage(TEACHER);
-            break;
-        case 7:
             studentRegistrationPage();
-            break;
-        case 8:
-            // updateStudentAccount();
-            break;
-        case 9:
-            removeAccountPage(STUDENT);
             break;
         default:
             getCharacter("Press ENTER to go back...\n");

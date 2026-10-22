@@ -15,26 +15,21 @@ void showAcademicRecord(AcademicRecord *record, const char *student_id)
 
     printf("---------------------------------------------------------------\n");
 
-    printf("Sl.  Course Code.    Course Title                  Credit  GPA  Grade\n");
+    printf("Sl.  Course Code.    Course Title                  Credit\n");
     printf("------------------------------------------------------------------\n");
 
     for (int j = 0; j < 5; j++)
     {
-        printf("%-4d %-13s %-35s %.2f   %.2f  %s\n",
+        printf("%-4d %-13s %-35s %.2f\n",
                j + 1,
                record->courses[j].courseShortName,
                record->courses[j].courseTitle,
-               record->courses[j].courseCredit,
-               record->courses[j].gradePoint,
-               record->courses[j].letterGrade);
+               record->courses[j].courseCredit);
     }
 
     printf("---------------------------------------------------------------\n");
 
     printf("Credit Taken           : %.2f\n", record->creditTaken);
-    printf("Credit Completed       : %.2f\n", record->creditCompleted);
-    printf("Term GPA               : %.2f\n", record->termGPA);
-    printf("CGPA                   : %.2f\n", record->cgpa);
 
     printf("===============================================================\n");
 
