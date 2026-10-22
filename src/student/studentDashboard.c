@@ -5,9 +5,10 @@
 #include "academicInfoPage.h"
 #include "hallDetailsPage.h"
 #include "libraryInfoPage.h"
+#include "updateStudentProfile.h"
 #include "utility.h"
 
-#define STUDENT_DASHBOARD_LAST_CHOICE 4
+#define STUDENT_DASHBOARD_LAST_CHOICE 5
 
 
 
@@ -19,7 +20,7 @@ void studentDashboard(const char *student_id, const char *filepath)
     {
         clearScreen();
         printBoxedText("STUDENT DASHBOARD PANEL");
-        printMenuItems(STUDENT_DASHBOARD_LAST_CHOICE, "Student Profile", "Academic Information", "Hall Details", "Library Information");
+        printMenuItems(STUDENT_DASHBOARD_LAST_CHOICE, "Student Profile", "Update Profile", "Academic Information", "Hall Details", "Library Information");
         printf("0. Quit\n");
 
         int choice = getInt("> ");
@@ -42,12 +43,15 @@ void studentDashboard(const char *student_id, const char *filepath)
                 studentProfilePage(student_id, filepath);
                 break;
             case 2:
-                academicInfoPage(student_id, filepath);
+                updateStudentProfile(student_id, filepath);
                 break;
             case 3:
-                hallDetailsPage(student_id, filepath);
+                academicInfoPage(student_id, filepath);
                 break;
             case 4:
+                hallDetailsPage(student_id, filepath);
+                break;
+            case 5:
                 libraryInfoPage(student_id, filepath);
                 break;
             default:

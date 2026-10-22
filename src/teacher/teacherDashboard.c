@@ -41,7 +41,7 @@ void teacherDashboard(const char *teacherId, const char *filepath)
         printMenuItems(
             TEACHER_DASHBOARD_LAST_CHOICE,
             "Personal Information",
-            "Update Personal Information",
+            "Update Profile",
             "Update CT Marks",
             "Update Term Exam Marks");
         printf("0. Quit\n");

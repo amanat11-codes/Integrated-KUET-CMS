@@ -25,10 +25,13 @@ void adminDashboard()
         printf("0. Quit\n");
 
         int choice;
-        while ((choice = getInt("> ")) < 1 || choice > LAST_CHOICE)
+        while ((choice = getInt("> ")) < 0 || choice > LAST_CHOICE)
         {
             printf("Invalid choice. Please try again.\n");
         }
+
+        if (choice == 0)
+            return;
 
         switch (choice)
         {

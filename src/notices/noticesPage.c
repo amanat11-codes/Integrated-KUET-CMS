@@ -218,6 +218,12 @@ void noticesPage()
 
         while(!noticeExists(choice))
         {
+            if (strcmp(choice, "0") == 0)
+            {
+                free(notices);
+                return;
+            }
+
             printf("Please input a valid ID from the list\n");
             getString("> ", sizeof(choice), choice);
         }

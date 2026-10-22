@@ -15,62 +15,99 @@
 
 void updateName(TeacherProfile *record)
 {
-    char *newName = malloc(NAME_MAX_LENGTH * sizeof(char));
-    getString("Enter new name: ", NAME_MAX_LENGTH, newName);
-    strcpy(record->name, newName);
-    printf("Updated name: %s\n", record->name);
-    free(newName);
+    char newName[NAME_MAX_LENGTH];
+    while (1)
+    {
+        getString("Enter new name: ", sizeof(newName), newName);
+        printf("New name: %s\n", newName);
+        char response = getCharacter("[?] Save this value? (Y/N): ");
+        if (response == 'Y' || response == 'y')
+        {
+            strcpy(record->name, newName);
+            return;
+        }
+    }
 }
 
 void updateDesignation(TeacherProfile *record)
 {
-    char *newDesignation = malloc(DESIGNATION_MAX_LENGTH * sizeof(char));
-    getString("Enter new designation: ", DESIGNATION_MAX_LENGTH, newDesignation);
-    strcpy(record->designation, newDesignation);
-    printf("Updated designation: %s\n", record->designation);
-    free(newDesignation);
+    char newDesignation[DESIGNATION_MAX_LENGTH];
+    while (1)
+    {
+        getString("Enter new designation: ", sizeof(newDesignation), newDesignation);
+        printf("New designation: %s\n", newDesignation);
+        char response = getCharacter("[?] Save this value? (Y/N): ");
+        if (response == 'Y' || response == 'y')
+        {
+            strcpy(record->designation, newDesignation);
+            return;
+        }
+    }
 }
 
 void updateDepartment(TeacherProfile *record)
 {
-    char *newDepartment = malloc(DEPARTMENT_MAX_LENGTH * sizeof(char));
-    getString("Enter new department: ", DEPARTMENT_MAX_LENGTH, newDepartment);
-    strcpy(record->department, newDepartment);
-    printf("Updated department: %s\n", record->department);
-    free(newDepartment);
+    char newDepartment[DEPARTMENT_MAX_LENGTH];
+    while (1)
+    {
+        getString("Enter new department: ", sizeof(newDepartment), newDepartment);
+        printf("New department: %s\n", newDepartment);
+        char response = getCharacter("[?] Save this value? (Y/N): ");
+        if (response == 'Y' || response == 'y')
+        {
+            strcpy(record->department, newDepartment);
+            return;
+        }
+    }
 }
 
 void updatePhone(TeacherProfile *record)
 {
-    char *newPhone = malloc(PHONE_MAX_LENGTH * sizeof(char));
-    getString("Enter new phone number: ", PHONE_MAX_LENGTH, newPhone);
-    strcpy(record->phone, newPhone);
-    printf("Updated phone number: %s\n", record->phone);
-    free(newPhone);
+    char newPhone[PHONE_MAX_LENGTH];
+    while (1)
+    {
+        getString("Enter new phone number: ", sizeof(newPhone), newPhone);
+        printf("New phone number: %s\n", newPhone);
+        char response = getCharacter("[?] Save this value? (Y/N): ");
+        if (response == 'Y' || response == 'y')
+        {
+            strcpy(record->phone, newPhone);
+            return;
+        }
+    }
 }
 void updateEmail(TeacherProfile *record)
 {
-    char *newEmail = malloc(EMAIL_MAX_LENGTH * sizeof(char));
+    char newEmail[EMAIL_MAX_LENGTH];
     while (1)
     {
         getString("Enter new email: ", EMAIL_MAX_LENGTH, newEmail);
         if (validateEmailFormat(newEmail, TEACHER) == 0)
         {
-            break; // Valid email format
+            printf("New email: %s\n", newEmail);
+            char response = getCharacter("[?] Save this value? (Y/N): ");
+            if (response == 'Y' || response == 'y')
+                break;
         }
     }
     strcpy(record->email, newEmail);
     printf("Updated email: %s\n", record->email);
-    free(newEmail);
 }
 
 void updateResearchInterest(TeacherProfile *record)
 {
-    char *newResearchInterest = malloc(RESEARCH_INTEREST_MAX_LENGTH * sizeof(char));
-    getString("Enter new research interest: ", RESEARCH_INTEREST_MAX_LENGTH, newResearchInterest);
-    strcpy(record->researchSpecialization, newResearchInterest);
-    printf("Updated research interest: %s\n", record->researchSpecialization);
-    free(newResearchInterest);
+    char newResearchInterest[RESEARCH_INTEREST_MAX_LENGTH];
+    while (1)
+    {
+        getString("Enter new research interest: ", sizeof(newResearchInterest), newResearchInterest);
+        printf("New research interest: %s\n", newResearchInterest);
+        char response = getCharacter("[?] Save this value? (Y/N): ");
+        if (response == 'Y' || response == 'y')
+        {
+            strcpy(record->researchSpecialization, newResearchInterest);
+            return;
+        }
+    }
 }
 
 TeacherProfile updatePersonalInfo(TeacherProfile *record, const char *teacher_id, const char *filepath)
