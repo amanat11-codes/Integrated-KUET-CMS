@@ -14,6 +14,14 @@ int main(void)
     User ID: 1001 | Password: 2002 | User type: 3 (admin)
     */
 
+    /*
+    - Test the current features of the system
+    - Prepare the documentation
+    - Go through the code and try to understand the logic and flow of the program
+    - List the features that are not yet implemented : are they necessary?
+
+    */
+
     return 0;
 }
 
