@@ -48,7 +48,7 @@ void registrationPortal(void)
 
         printf("\n");
 
-        choice = getInt("  Enter your choice: ");
+        choice = getInt("[?]   Enter your choice: ");
 
         while (choice < 0 || choice > REGISTRATION_PORTAL_LAST_CHOICE)
         {
@@ -56,7 +56,7 @@ void registrationPortal(void)
             printf("  [!] Invalid option. Please choose from 0 to %d.\n",
                    REGISTRATION_PORTAL_LAST_CHOICE);
 
-            choice = getInt("  Enter your choice: ");
+            choice = getInt("[?]   Enter your choice: ");
 
             if (choice == 0)
                 return;

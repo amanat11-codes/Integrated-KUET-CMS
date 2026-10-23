@@ -42,16 +42,13 @@ LoginStatus credentialsValidation(const char *id, const char *password, UserType
 void getFilePathForUserType(char *id, UserType userType, char *filepath);
 char* showDate(Date date);
 int getTodayDateString(char *dest, size_t destSize);
-void printAppHeader();
+void printAppHeader(void);
 int validateEmailFormat(const char *email, UserType userType);
 int isIdAlreadyRegistered(const char *id);
 int isAllDigits(const char *str);
 
-//void multiLineBoxedText(int lines, ...);
-//int findMaximum(int *lineLengths, int lines);
 
-
-void clearScreen();
+void clearScreen(void);
 
 
 

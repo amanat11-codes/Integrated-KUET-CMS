@@ -9,7 +9,7 @@
 #include "teacherRegistrationPage.h"
 #include "adminRegistrationPage.h"
 
-void invalidCommandLineArgs(char *appName)
+static void invalidCommandLineArgs(char *appName)
 {
     printf("[!] ERROR: Invalid command line arguments.\n");
     printf("Usage: ./%s [notices]\n", appName);

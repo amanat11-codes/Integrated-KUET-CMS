@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include "utility.h"
 #include "studentDashboard.h"
+#include "studentProfilePage.h"
 
-void showStudentProfile(StudentProfile *record, const char *student_id)
+static void showStudentProfile(StudentProfile *record, const char *student_id)
 {
     printf("Name                   %s\n", record->name);
     printf("Student ID             %s\n", student_id);
@@ -31,8 +32,8 @@ void studentProfilePage(const char *student_id, const char *filepath)
     FILE *fp = fopen(filepath, "rb");
     if (fp == NULL)
     {
-        printf("Error opening file: %s\n", filepath);
-        getCharacter("Press ENTER to return to the student dashboard...");
+        printf("[!] Error opening file: %s\n", filepath);
+        getCharacter("[?] Press ENTER to return to the student dashboard...");
         return;
     }
 
@@ -44,15 +45,15 @@ void studentProfilePage(const char *student_id, const char *filepath)
 
     if (fread(&record, sizeof(StudentProfile), 1, fp) != 1)
     {
-        printf("Error reading file: %s\n", filepath);
+        printf("[!] Error reading file: %s\n", filepath);
         fclose(fp);
-        getCharacter("Press ENTER to return to the student dashboard...");
+        getCharacter("[?] Press ENTER to return to the student dashboard...");
         return;
     }
     fclose(fp);
 
     showStudentProfile(&record, student_id);
-    getCharacter("Press ENTER to return to the student dashboard...");
+    getCharacter("[?] \nPress ENTER to return to the student dashboard...");
 
     return;
 

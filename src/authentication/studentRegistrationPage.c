@@ -46,7 +46,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  Enter Student ID (first 8 digits are taken): ", sizeof(studentId), studentId);
+        getString("[?]   Enter Student ID (first 8 digits are taken): ", sizeof(studentId), studentId);
 
         if (studentId[0] == '\0' || isAllDigits(studentId) == 0)
         {
@@ -79,7 +79,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  Enter Password (first 8 characters are taken): ", sizeof(password), password);
+        getString("[?]   Enter Password (first 8 characters are taken): ", sizeof(password), password);
 
         if (password[0] == '\0' || isAllDigits(password) == 0)
         {
@@ -87,7 +87,7 @@ void studentRegistrationPage(void)
             continue;
         }
 
-        getString("  Confirm Password: ", sizeof(confirmPass), confirmPass);
+        getString("[?]   Confirm Password: ", sizeof(confirmPass), confirmPass);
 
         if (strcmp(password, confirmPass) != 0)
         {
@@ -106,7 +106,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nFull Name: ", sizeof(profile.name), profile.name);
+        getString("[?]   \n\nFull Name: ", sizeof(profile.name), profile.name);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
         if (ch == 'Y' || ch == 'y')
@@ -117,7 +117,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nDepartment (e.g. Computer Science & Engineering): ",
+        getString("[?]   \n\nDepartment (e.g. Computer Science & Engineering): ",
                   sizeof(profile.department), profile.department);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
@@ -129,7 +129,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nYear (e.g. 1st Year): ", sizeof(profile.year), profile.year);
+        getString("[?]   \n\nYear (e.g. 1st Year): ", sizeof(profile.year), profile.year);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
         if (ch == 'Y' || ch == 'y')
@@ -140,7 +140,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nTerm (e.g. 1st Term): ", sizeof(profile.term), profile.term);
+        getString("[?]   \n\nTerm (e.g. 1st Term): ", sizeof(profile.term), profile.term);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
         if (ch == 'Y' || ch == 'y')
@@ -151,7 +151,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nPhone Number (e.g. 01XXXXXXXXX): ",
+        getString("[?]   \n\nPhone Number (e.g. 01XXXXXXXXX): ",
                   sizeof(profile.phone), profile.phone);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
 
@@ -163,7 +163,7 @@ void studentRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nEmail Address: ", sizeof(profile.email), profile.email);
+        getString("[?]   \n\nEmail Address: ", sizeof(profile.email), profile.email);
         if (validateEmailFormat(profile.email, STUDENT) == 0)
         {
             char ch = getCharacter("  [?] Is this correct? (Y/N): ");
@@ -215,7 +215,7 @@ void studentRegistrationPage(void)
     {
         printf("  [!] Error: Could not create student file at: %s\n", filepath);
         printf("      Make sure the database/students/ directory exists.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -231,7 +231,7 @@ void studentRegistrationPage(void)
     {
         remove(filepath);
         printf("  [!] Error writing student file. Registration aborted.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -249,7 +249,7 @@ void studentRegistrationPage(void)
     {
         printf("  [!] Error: Could not open credentials file.\n");
         printf("      Student file was created but credentials were NOT saved.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -261,7 +261,7 @@ void studentRegistrationPage(void)
     {
         remove(filepath);
         printf("  [!] Error writing credentials. Please contact an administrator.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -276,5 +276,5 @@ void studentRegistrationPage(void)
     printf("  You can now log in through the Login Portal.\n");
     printf("\n");
 
-    getCharacter("  Press ENTER to return to the Registration Portal...");
+    getCharacter("[?]   Press ENTER to return to the Registration Portal...");
 }

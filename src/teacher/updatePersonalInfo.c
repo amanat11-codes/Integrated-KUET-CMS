@@ -13,101 +13,88 @@
 #define EMAIL_MAX_LENGTH 80
 #define RESEARCH_INTEREST_MAX_LENGTH 160
 
-void updateName(TeacherProfile *record)
+static int confirmValue(const char *field, const char *value)
 {
-    char newName[NAME_MAX_LENGTH];
+    printf("%s: %s\n", field, value);
+    char response = getCharacter("[?] Save this value? (Y/N): ");
+    return response == 'Y' || response == 'y';
+}
+
+static void updateStringField(const char *field, char *destination, size_t size)
+{
+    char value[RESEARCH_INTEREST_MAX_LENGTH];
+
     while (1)
     {
-        getString("Enter new name: ", sizeof(newName), newName);
-        printf("New name: %s\n", newName);
-        char response = getCharacter("[?] Save this value? (Y/N): ");
-        if (response == 'Y' || response == 'y')
+        char prompt[192];
+        snprintf(prompt, sizeof(prompt), "[?] Enter new %s: ", field);
+        getString(prompt, (int)sizeof(value), value);
+
+        if (value[0] == '\0')
         {
-            strcpy(record->name, newName);
+            printf("[!] Empty input. Please enter a value.\n");
+            continue;
+        }
+
+        if (confirmValue(field, value))
+        {
+            strncpy(destination, value, size - 1);
+            destination[size - 1] = '\0';
             return;
         }
     }
 }
 
-void updateDesignation(TeacherProfile *record)
+static void updateName(TeacherProfile *record)
 {
-    char newDesignation[DESIGNATION_MAX_LENGTH];
-    while (1)
-    {
-        getString("Enter new designation: ", sizeof(newDesignation), newDesignation);
-        printf("New designation: %s\n", newDesignation);
-        char response = getCharacter("[?] Save this value? (Y/N): ");
-        if (response == 'Y' || response == 'y')
-        {
-            strcpy(record->designation, newDesignation);
-            return;
-        }
-    }
+    updateStringField("name", record->name, sizeof(record->name));
 }
 
-void updateDepartment(TeacherProfile *record)
+static void updateDesignation(TeacherProfile *record)
 {
-    char newDepartment[DEPARTMENT_MAX_LENGTH];
-    while (1)
-    {
-        getString("Enter new department: ", sizeof(newDepartment), newDepartment);
-        printf("New department: %s\n", newDepartment);
-        char response = getCharacter("[?] Save this value? (Y/N): ");
-        if (response == 'Y' || response == 'y')
-        {
-            strcpy(record->department, newDepartment);
-            return;
-        }
-    }
+    updateStringField("designation", record->designation, sizeof(record->designation));
 }
 
-void updatePhone(TeacherProfile *record)
+static void updateDepartment(TeacherProfile *record)
 {
-    char newPhone[PHONE_MAX_LENGTH];
-    while (1)
-    {
-        getString("Enter new phone number: ", sizeof(newPhone), newPhone);
-        printf("New phone number: %s\n", newPhone);
-        char response = getCharacter("[?] Save this value? (Y/N): ");
-        if (response == 'Y' || response == 'y')
-        {
-            strcpy(record->phone, newPhone);
-            return;
-        }
-    }
+    updateStringField("department", record->department, sizeof(record->department));
 }
-void updateEmail(TeacherProfile *record)
+
+static void updatePhone(TeacherProfile *record)
+{
+    updateStringField("phone number", record->phone, sizeof(record->phone));
+}
+
+static void updateEmail(TeacherProfile *record)
 {
     char newEmail[EMAIL_MAX_LENGTH];
     while (1)
     {
-        getString("Enter new email: ", EMAIL_MAX_LENGTH, newEmail);
+        getString("[?] Enter new email: ", EMAIL_MAX_LENGTH, newEmail);
+        if (newEmail[0] == '\0')
+        {
+            printf("[!] Empty input. Please enter a value.\n");
+            continue;
+        }
+
         if (validateEmailFormat(newEmail, TEACHER) == 0)
         {
-            printf("New email: %s\n", newEmail);
-            char response = getCharacter("[?] Save this value? (Y/N): ");
-            if (response == 'Y' || response == 'y')
-                break;
+            if (confirmValue("email", newEmail))
+            {
+                strncpy(record->email, newEmail, sizeof(record->email) - 1);
+                record->email[sizeof(record->email) - 1] = '\0';
+                return;
+            }
         }
+        else
+            printf("[!] Please enter a valid email containing '@'.\n");
     }
-    strcpy(record->email, newEmail);
-    printf("Updated email: %s\n", record->email);
 }
 
-void updateResearchInterest(TeacherProfile *record)
+static void updateResearchInterest(TeacherProfile *record)
 {
-    char newResearchInterest[RESEARCH_INTEREST_MAX_LENGTH];
-    while (1)
-    {
-        getString("Enter new research interest: ", sizeof(newResearchInterest), newResearchInterest);
-        printf("New research interest: %s\n", newResearchInterest);
-        char response = getCharacter("[?] Save this value? (Y/N): ");
-        if (response == 'Y' || response == 'y')
-        {
-            strcpy(record->researchSpecialization, newResearchInterest);
-            return;
-        }
-    }
+    updateStringField("research interest", record->researchSpecialization,
+                      sizeof(record->researchSpecialization));
 }
 
 TeacherProfile updatePersonalInfo(TeacherProfile *record, const char *teacher_id, const char *filepath)
@@ -126,7 +113,7 @@ TeacherProfile updatePersonalInfo(TeacherProfile *record, const char *teacher_id
     while (1)
     {
 
-        int ch = getInt("Which information would you like to update? (1-Name, 2-Designation, 3-Department, 4-Phone, 5-Email, 6-Research Interest, 0-Exit): ");
+        int ch = getInt("[?] Which information would you like to update? (1-Name, 2-Designation, 3-Department, 4-Phone, 5-Email, 6-Research Interest, 0-Exit): ");
 
         switch (ch)
         {
@@ -152,7 +139,7 @@ TeacherProfile updatePersonalInfo(TeacherProfile *record, const char *teacher_id
             printf("Profile update completed.");
             return updatedProfile;
         default:
-            printf("Invalid choice. Please try again.\n");
+            printf("[!] Invalid choice. Please try again.\n");
             break;
         }
     }

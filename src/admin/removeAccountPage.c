@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <io.h>
+#include "removeAccountPage.h"
 #include "utility.h"
 
 #define TEACHERS_DIR "database/teachers/"
@@ -68,12 +69,12 @@ void removeAccountPage(UserType User)
     switch (User)
     {
     case TEACHER: {
-        getString("Enter Teacher ID to remove: ", 9, id);
+        getString("[?] Enter Teacher ID to remove: ", 9, id);
         ch = getCharacter(prompt);
         if (ch != 'Y' && ch != 'y')
         {
             printf("Operation cancelled. Teacher account with ID %s was not removed.\n", id);
-            getCharacter("Press ENTER to go back...\n");
+            getCharacter("[?] Press ENTER to go back...\n");
             return;
         }
         snprintf(filepath, sizeof(filepath), "%s%s.teacher", TEACHERS_DIR, id);
@@ -83,21 +84,21 @@ void removeAccountPage(UserType User)
             printf("Teacher account with ID %s has been removed successfully.\n", id);
         }
         else if (credentialResult == 0)
-            printf("Error: No teacher credentials found for ID %s.\n", id);
+            printf("[!] Error: No teacher credentials found for ID %s.\n", id);
         else
-            printf("Error: Could not remove teacher account with ID %s completely.\n", id);
+            printf("[!] Error: Could not remove teacher account with ID %s completely.\n", id);
 
-        getCharacter("Press ENTER to go back...\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 
     case STUDENT: {
-        getString("Enter Student ID to remove: ", 9, id);
+        getString("[?] Enter Student ID to remove: ", 9, id);
         ch = getCharacter(prompt);
         if (ch != 'Y' && ch != 'y')
         {
             printf("Operation cancelled. Student account with ID %s was not removed.\n", id);
-            getCharacter("Press ENTER to go back...\n");
+            getCharacter("[?] Press ENTER to go back...\n");
             return;
     }
         }
@@ -106,16 +107,16 @@ void removeAccountPage(UserType User)
         if (credentialResult == 1 && remove(filepath) == 0)
             printf("Student account with ID %s has been removed successfully.\n", id);
         else if (credentialResult == 0)
-            printf("Error: No student credentials found for ID %s.\n", id);
+            printf("[!] Error: No student credentials found for ID %s.\n", id);
         else
-            printf("Error: Could not remove student account with ID %s completely.\n", id);
+            printf("[!] Error: Could not remove student account with ID %s completely.\n", id);
 
-        getCharacter("Press ENTER to go back...\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
 
     case ADMIN:
         printf("Admin account removal is not allowed.\n");
-        getCharacter("Press ENTER to go back...\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 }

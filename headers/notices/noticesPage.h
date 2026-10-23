@@ -1,4 +1,3 @@
-void noticesPage();
 #ifndef NOTICES_PAGE_H
 #define NOTICES_PAGE_H
 
@@ -18,9 +17,8 @@ typedef struct {
 
 int getNoticesCount(void);
 int fetchAllNotices(Notice *notices, int count);
-void displayNoticeListItem(int serial, char* date, char* title, char* intro);
 void displayNoticeList(Notice *notices, int count);
 int noticeExists(const char *noticeId);
-
+void noticesPage(void);
 
 #endif

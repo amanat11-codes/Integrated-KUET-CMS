@@ -1,7 +1,7 @@
-#ifndef SHARED_PORTAL_H
-#define SHARED_PORTAL_H
+#ifndef LOGIN_PORTAL_H
+#define LOGIN_PORTAL_H
 
 
-void loginPortal();
+void loginPortal(void);
 
 #endif

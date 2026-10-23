@@ -21,8 +21,18 @@ static void updateStringField(const char *field, char *destination, size_t size)
     while (1)
     {
         char prompt[192];
-        snprintf(prompt, sizeof(prompt), "Enter new %s: ", field);
+        snprintf(prompt, sizeof(prompt), "[?] Enter new %s: ", field);
         getString(prompt, (int)sizeof(value), value);
+        if (value[0] == '\0')
+        {
+            char ch = getCharacter("[!] Empty input. \n[?] Enter [y] to try again or [n] to keep the current value: ");
+            if (ch == 'n' || ch == 'N')
+                return;
+            if (ch == 'y' || ch == 'Y')
+                continue;
+            printf("[!] Invalid option. Please enter y or n.\n");
+            continue;
+        }
         if (confirmValue(field, value))
         {
             strncpy(destination, value, size - 1);
@@ -37,7 +47,7 @@ static void updateIntField(const char *field, int *destination)
     while (1)
     {
         char value[32];
-        int number = getInt("Enter new value: ");
+        int number = getInt("[?] Enter new value: ");
         snprintf(value, sizeof(value), "%d", number);
         if (confirmValue(field, value))
         {
@@ -72,7 +82,7 @@ static void updateDateField(const char *field, Date *destination)
 
     while (1)
     {
-        getString("Enter date (dd-mm-yyyy; leave blank for today's date): ",
+        getString("[?] Enter date (dd-mm-yyyy; leave blank for today's date): ",
                   sizeof(value), value);
         if (value[0] == '\0' && getTodayDateString(today, sizeof(today)))
             strcpy(value, today);
@@ -83,7 +93,7 @@ static void updateDateField(const char *field, Date *destination)
             *destination = date;
             return;
         }
-        printf("Invalid date. Please use dd-mm-yyyy.\n");
+        printf("[!] Invalid date. Please use dd-mm-yyyy.\n");
     }
 }
 
@@ -95,7 +105,7 @@ static void updateDateStringField(const char *field, char *destination, size_t s
 
     while (1)
     {
-        getString("Enter date (dd-mm-yyyy; leave blank for today's date): ",
+        getString("[?] Enter date (dd-mm-yyyy; leave blank for today's date): ",
                   sizeof(value), value);
         if (value[0] == '\0' && getTodayDateString(today, sizeof(today)))
             strcpy(value, today);
@@ -106,7 +116,7 @@ static void updateDateStringField(const char *field, char *destination, size_t s
             destination[size - 1] = '\0';
             return;
         }
-        printf("Invalid date. Please use dd-mm-yyyy.\n");
+        printf("[!] Invalid date. Please use dd-mm-yyyy.\n");
     }
 }
 
@@ -179,39 +189,56 @@ void updateStudentProfile(const char *student_id, const char *filepath)
 
     if (!readStudentData(filepath, &header, &profile, &academic, &hall, &library))
     {
-        printf("Error reading student data: %s\n", filepath);
-        getCharacter("Press ENTER to return to the student dashboard...");
+        printf("[!] Error reading student data: %s\n", filepath);
+        getCharacter("[?] Press ENTER to return to the student dashboard...");
         return;
     }
 
     while (1)
     {
-        int choice = getInt(
-            "Choose a section: "
-            "(1-Profile, 2-Academic, 3-Hall, 4-Library, 0-Save and Exit): ");
+        clearScreen();
+        printMenuItems(4, "Profile", "Academic", "Hall", "Library");
+        printf("0. Save and Exit\n");
 
+        int choice = getInt("[?] Select section to update: ");
+        while (getchar() != '\n')
+            ; // Clear the input buffer
         if (choice == 0)
             break;
 
         if (choice == 1)
         {
-            int field = getInt(
-                "Profile field (1-Name, 2-Department, 3-Year, 4-Term, "
-                "5-Phone, 6-Email, 7-Blood Group, 8-Father's Name, "
-                "9-Mother's Name, 10-Permanent Address, 11-Current Address, "
-                "12-Advisor, 0-Back): ");
+            clearScreen();
+            printMenuItems(12, "Name", "Department", "Year", "Term", "Phone", "Email",
+                           "Blood Group", "Father's Name", "Mother's Name",
+                           "Permanent Address", "Current Address", "Advisor");
+            printf("0. Save and Exit\n");
+
+            int field = getInt("[?] Select profile field to update: ");
+            while (getchar() != '\n')
+                ; // Clear the input buffer
             switch (field)
             {
-            case 1: updateStringField("name", profile.name, sizeof(profile.name)); break;
-            case 2: updateStringField("department", profile.department, sizeof(profile.department)); break;
-            case 3: updateStringField("year", profile.year, sizeof(profile.year)); break;
-            case 4: updateStringField("term", profile.term, sizeof(profile.term)); break;
-            case 5: updateStringField("phone", profile.phone, sizeof(profile.phone)); break;
+            case 1:
+                updateStringField("name", profile.name, sizeof(profile.name));
+                break;
+            case 2:
+                updateStringField("department", profile.department, sizeof(profile.department));
+                break;
+            case 3:
+                updateStringField("year", profile.year, sizeof(profile.year));
+                break;
+            case 4:
+                updateStringField("term", profile.term, sizeof(profile.term));
+                break;
+            case 5:
+                updateStringField("phone", profile.phone, sizeof(profile.phone));
+                break;
             case 6:
                 while (1)
                 {
                     char email[sizeof(profile.email)];
-                    getString("Enter new email: ", sizeof(email), email);
+                    getString("[?] Enter new email: ", sizeof(email), email);
                     if (validateEmailFormat(email, STUDENT) == 0 &&
                         confirmValue("email", email))
                     {
@@ -220,52 +247,106 @@ void updateStudentProfile(const char *student_id, const char *filepath)
                     }
                 }
                 break;
-            case 7: updateStringField("blood group", profile.bloodGroup, sizeof(profile.bloodGroup)); break;
-            case 8: updateStringField("father's name", profile.fathersName, sizeof(profile.fathersName)); break;
-            case 9: updateStringField("mother's name", profile.mothersName, sizeof(profile.mothersName)); break;
-            case 10: updateStringField("permanent address", profile.permanentAddress, sizeof(profile.permanentAddress)); break;
-            case 11: updateStringField("current address", profile.currentAddress, sizeof(profile.currentAddress)); break;
-            case 12: updateStringField("advisor", profile.advisor, sizeof(profile.advisor)); break;
-            default: break;
+            case 7:
+                updateStringField("blood group", profile.bloodGroup, sizeof(profile.bloodGroup));
+                break;
+            case 8:
+                updateStringField("father's name", profile.fathersName, sizeof(profile.fathersName));
+                break;
+            case 9:
+                updateStringField("mother's name", profile.mothersName, sizeof(profile.mothersName));
+                break;
+            case 10:
+                updateStringField("permanent address", profile.permanentAddress, sizeof(profile.permanentAddress));
+                break;
+            case 11:
+                updateStringField("current address", profile.currentAddress, sizeof(profile.currentAddress));
+                break;
+            case 12:
+                updateStringField("advisor", profile.advisor, sizeof(profile.advisor));
+                break;
+            default:
+                break;
             }
         }
         else if (choice == 2)
         {
-            int field = getInt(
-                "Academic field (1-Session, 2-Year, 3-Term, 0-Back): ");
+            clearScreen();
+
+            printMenuItems(3, "Session", "Year", "Term");
+            printf("0. Save and Exit\n");
+            int field = getInt("[?] Select academic field to update: ");
+            while (getchar() != '\n')
+                ; // Clear the input buffer
             switch (field)
             {
-            case 1: updateIntField("session", &academic.session); break;
-            case 2: updateIntField("academic year", &academic.year); break;
-            case 3: updateIntField("academic term", &academic.term); break;
-            default: break;
+            case 1:
+                updateIntField("session", &academic.session);
+                break;
+            case 2:
+                updateIntField("academic year", &academic.year);
+                break;
+            case 3:
+                updateIntField("academic term", &academic.term);
+                break;
+            default:
+                break;
             }
         }
         else if (choice == 3)
         {
-            int field = getInt(
-                "Hall field (1-Hall Name, 2-Meal Status, 3-Boarder Number, "
-                "4-Hall Side, 5-Next Monthly Feast, 6-Set Meal, "
-                "7-Meal OFF Start Date, 8-Meal OFF End Date, 0-Back): ");
+            clearScreen();
+
+            printMenuItems(8, "Hall Name", "Meal Status", "Boarder Number", "Hall Side",
+                           "Next Monthly Feast", "Set Meal", "Meal OFF Start Date", "Meal OFF End Date");
+            printf("0. Save and Exit\n");
+            int field = getInt("[?] Select hall field to update: ");
+            while (getchar() != '\n')
+                ; // Clear the input buffer
             switch (field)
             {
-            case 1: updateStringField("hall name", hall.hallName, sizeof(hall.hallName)); break;
-            case 2: updateIntField("meal status", &hall.mealStatus); break;
-            case 3: updateIntField("boarder number", &hall.boarderNumber); break;
-            case 4: updateStringField("hall side", hall.hallSide, sizeof(hall.hallSide)); break;
-            case 5: updateDateField("next monthly feast", &hall.nextMonthlyFeast); break;
-            case 6: updateIntField("set meal", &hall.setMeal); break;
-            case 7: updateDateStringField("Meal OFF start date", hall.offStartDate, sizeof(hall.offStartDate)); break;
-            case 8: updateDateStringField("Meal OFF end date", hall.offEndDate, sizeof(hall.offEndDate)); break;
-            default: break;
+            case 1:
+                updateStringField("hall name", hall.hallName, sizeof(hall.hallName));
+                break;
+            case 2:
+                updateIntField("meal status", &hall.mealStatus);
+                break;
+            case 3:
+                updateIntField("boarder number", &hall.boarderNumber);
+                break;
+            case 4:
+                updateStringField("hall side", hall.hallSide, sizeof(hall.hallSide));
+                break;
+            case 5:
+                updateDateField("next monthly feast", &hall.nextMonthlyFeast);
+                break;
+            case 6:
+                updateIntField("set meal", &hall.setMeal);
+                break;
+            case 7:
+                updateDateStringField("Meal OFF start date", hall.offStartDate, sizeof(hall.offStartDate));
+                break;
+            case 8:
+                updateDateStringField("Meal OFF end date", hall.offEndDate, sizeof(hall.offEndDate));
+                break;
+            default:
+                break;
             }
         }
         else if (choice == 4)
         {
-            int book = getInt("Library book number (1-3, 0-Back): ");
+            clearScreen();
+
+            int book = getInt("[?] Library book number (1-3, 0-Back): ");
             if (book >= 1 && book <= 3)
             {
-                int field = getInt("Library field (1-Book Title, 2-Return Date, 0-Back): ");
+                clearScreen();
+
+                printMenuItems(2, "Book Title", "Return Date");
+                printf("0. Back\n");
+                int field = getInt("[?] Select library field to update: ");
+                while (getchar() != '\n')
+                    ; // Clear the input buffer
                 if (field == 1)
                     updateStringField("book title", library.books[book - 1].bookTitle,
                                       sizeof(library.books[book - 1].bookTitle));
@@ -275,14 +356,14 @@ void updateStudentProfile(const char *student_id, const char *filepath)
         }
         else
         {
-            printf("Invalid section. Please try again.\n");
+            printf("[!] Invalid section. Please try again.\n");
         }
     }
 
     if (writeStudentData(filepath, &header, &profile, &academic, &hall, &library))
         printf("Student information updated successfully.\n");
     else
-        printf("Error writing updated student information: %s\n", filepath);
+        printf("[!] Error writing updated student information: %s\n", filepath);
 
-    getCharacter("Press ENTER to return to the student dashboard...");
+    getCharacter("[?] Press ENTER to return to the student dashboard...");
 }

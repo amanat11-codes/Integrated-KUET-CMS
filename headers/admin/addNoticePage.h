@@ -3,7 +3,6 @@
 
 #include "noticesPage.h"
 
-void addNotice();
-char* createIntro(char* details);
+void addNotice(void);
 
 #endif

@@ -71,9 +71,6 @@ typedef struct {
     uint32_t libraryDetailsOffset;
 } StudentFileHeader;
 
-
-
-
 void studentDashboard(const char *student_id, const char *filepath);
 
 #endif

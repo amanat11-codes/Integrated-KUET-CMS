@@ -1,7 +1,6 @@
 #include "utility.h"
 #include <stdio.h>
 #include <windows.h>
-#include <stdio.h>
 #include "studentLoginPage.h"
 #include "studentDashboard.h"
 
@@ -17,13 +16,13 @@ void studentLoginPage(void)
     {
         clearScreen();
         printBoxedText("STUDENT LOGIN");
-        getString("Enter Student ID: ", sizeof(student_id), student_id);
-        getString("Enter Password: ", sizeof(password), password);
+        getString("[?] Enter Student ID:  ", sizeof(student_id), student_id);
+        getString("[?] Enter Password:    ", sizeof(password), password);
 
         FILE *credentialsFile = fopen("database/credentials.dat", "rb");
         if (credentialsFile == NULL)
         {
-            getCharacter("Unable to open credentials file. Press ENTER to return...");
+            getCharacter("[?] Unable to open credentials file. Press ENTER to return...");
             return;
         }
 
@@ -38,16 +37,16 @@ void studentLoginPage(void)
         switch (status)
         {
         case SUCCESS:
-            getCharacter("Login successful! Press ENTER to continue...");
+            getCharacter("[?] Login successful! Press ENTER to continue...");
             char filepath[256];
             getFilePathForUserType(student_id, STUDENT, filepath);
             studentDashboard(student_id, filepath);
             return;
         case INVALID_CREDENTIALS:
-            getCharacter("Invalid Student ID or Password. Press ENTER to return to login menu...");
+            getCharacter("[?] Invalid Student ID or Password. Press ENTER to return to login menu...");
             return;
         case RECORD_NOT_FOUND:
-            getCharacter("Student record not found. Press ENTER to return to login menu...");
+            getCharacter("[?] Student record not found. Press ENTER to return to login menu...");
             return;
         }
     }

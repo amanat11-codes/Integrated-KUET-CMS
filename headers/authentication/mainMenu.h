@@ -1,6 +1,6 @@
-#ifndef LOGIN_PAGE_H
-#define LOGIN_PAGE_H
+#ifndef MAIN_MENU_H
+#define MAIN_MENU_H
 
-void mainMenu();
+void mainMenu(void);
 
 #endif

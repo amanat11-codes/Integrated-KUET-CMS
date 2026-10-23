@@ -7,7 +7,7 @@
 
 #define LOGIN_PORTAL_LAST_CHOICE 3
 
-void loginPortal()
+void loginPortal(void)
 {
     int choice;
 
@@ -25,7 +25,6 @@ void loginPortal()
 
         printf("\n");
         printf("       Welcome to the KUET CMS Login Portal!\n");
-        printf("       Please select your account type to continue.\n");
         printf("\n");
 
         printf("----------------------------------------------------------------\n");
@@ -38,8 +37,7 @@ void loginPortal()
             LOGIN_PORTAL_LAST_CHOICE,
             "Teacher Login",
             "Student Login",
-            "Admin Login"
-        );
+            "Admin Login");
 
         printf("\n");
         printf("----------------------------------------------------------------\n");
@@ -48,23 +46,18 @@ void loginPortal()
 
         printf("\n");
 
-        choice = getInt("  Enter your choice: ");
-
-        while (choice < 0 || choice > LOGIN_PORTAL_LAST_CHOICE)
+        while (1)
         {
-            printf("\n");
-            printf("  [!] Invalid option. Please choose from 0 to %d.\n",
-                   LOGIN_PORTAL_LAST_CHOICE);
-
-            choice = getInt("  Enter your choice: ");
+            choice = getInt("  [?] Enter your choice: ");
+            if (choice < 0 || choice > LOGIN_PORTAL_LAST_CHOICE)
+                continue;
 
             if (choice == 0)
                 return;
+
+            break;
         }
-
-        if (choice == 0)
-            return;
-
+        while (getchar() != '\n'); // Clear the input buffer
         switch (choice)
         {
         case 1:

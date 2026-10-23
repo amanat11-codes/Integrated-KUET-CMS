@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "addNoticePage.h"
-#include "notifications.h"
 #include "adminDashboardPage.h"
 #include "removeNoticePage.h"
 #include "teacherRegistrationPage.h"
@@ -10,7 +9,7 @@
 
 #define LAST_CHOICE 5
 
-void adminDashboard()
+void adminDashboard(void)
 {
     while (1)
     {
@@ -25,9 +24,9 @@ void adminDashboard()
         printf("0. Quit\n");
 
         int choice;
-        while ((choice = getInt("> ")) < 0 || choice > LAST_CHOICE)
+        while ((choice = getInt("[?] > ")) < 0 || choice > LAST_CHOICE)
         {
-            printf("Invalid choice. Please try again.\n");
+            printf("[!] Invalid choice. Please try again.\n");
         }
 
         if (choice == 0)
@@ -51,7 +50,7 @@ void adminDashboard()
             studentRegistrationPage();
             break;
         default:
-            getCharacter("Press ENTER to go back...\n");
+            getCharacter("[?] Press ENTER to go back...\n");
             return;
         }
     }

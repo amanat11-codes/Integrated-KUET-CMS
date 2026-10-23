@@ -3,7 +3,7 @@
 #include "studentDashboard.h"
 #include "academicInfoPage.h"
 
-void showAcademicRecord(AcademicRecord *record, const char *student_id)
+static void showAcademicRecord(AcademicRecord *record, const char *student_id)
 {
     printf("\n");
     printBoxedText("ACADEMIC INFORMATION");
@@ -18,7 +18,7 @@ void showAcademicRecord(AcademicRecord *record, const char *student_id)
     printf("Sl.  Course Code.    Course Title                  Credit\n");
     printf("------------------------------------------------------------------\n");
 
-    for (int j = 0; j < 5; j++)
+    for (int j = 0; j < 8; j++)
     {
         printf("%-4d %-13s %-35s %.2f\n",
                j + 1,
@@ -43,8 +43,8 @@ void academicInfoPage(const char *student_id, const char *filepath)
     FILE *fp = fopen(filepath, "rb");
     if (fp == NULL)
     {
-        printf("Error opening file: %s\n", filepath);
-        getCharacter("Press ENTER to return to the student dashboard...");
+        printf("[!] Error opening file: %s\n", filepath);
+        getCharacter("[?] Press ENTER to return to the student dashboard...");
         return;
     }
 
@@ -56,15 +56,15 @@ void academicInfoPage(const char *student_id, const char *filepath)
 
     if (fread(&record, sizeof(AcademicRecord), 1, fp) != 1)
     {
-        printf("Error reading file: %s\n", filepath);
+        printf("[!] Error reading file: %s\n", filepath);
         fclose(fp);
-        getCharacter("Press ENTER to return to the student dashboard...");
+        getCharacter("[?] Press ENTER to return to the student dashboard...");
         return;
     }
     fclose(fp);
 
     showAcademicRecord(&record, student_id);
-    getCharacter("Press ENTER to return to the student dashboard...");
+    getCharacter("[?] Press ENTER to return to the student dashboard...");
 
     return;
 }

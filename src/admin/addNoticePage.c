@@ -10,23 +10,7 @@
 #define MAX_DESCRIPTION_LENGTH 512
 
 
-char* createIntro(char* details)
-{
-    static char intro[MAX_INTRO_SIZE];
-    int detailsLength = strlen(details);
-    int prefixLength = MAX_INTRO_SIZE - 1 - 3;
-
-    if (detailsLength <= prefixLength)
-        strcpy(intro, details);
-    else
-        snprintf(intro, MAX_INTRO_SIZE, "%.*s...", prefixLength, details);
-
-    return intro;
-
-}
-
-
-void createNoticeFile(Notice *notice)
+static void createNoticeFile(Notice *notice)
 {
     char filename[256];
     snprintf(filename, sizeof(filename), "database/notices/%s.notice", notice->noticeId);
@@ -34,13 +18,13 @@ void createNoticeFile(Notice *notice)
     FILE *file = fopen(filename, "wb");
     if (file == NULL)
     {
-        printf("Error: Could not create notice file at: %s\n", filename);
+        printf("[!] Error: Could not create notice file at: %s\n", filename);
         return;
     }
 
     if (fwrite(notice, sizeof(Notice), 1, file) != 1)
     {
-        printf("Error: Could not write to notice file at: %s\n", filename);
+        printf("[!] Error: Could not write to notice file at: %s\n", filename);
         fclose(file);
         return;
     } else
@@ -83,7 +67,7 @@ static int parseDate(const char *input, int *dd, int *mm, int *yyyy)
     return 1; // return 1 if all checks pass, indicating a valid date
 }
 
-void addNotice()
+void addNotice(void)
 {
     clearScreen();
     printUnderlinedText("Add a Notice");
@@ -94,8 +78,8 @@ void addNotice()
 
     if (!getTodayDateString(today, sizeof(today)))
     {
-        printf("Unable to determine today's date.\n");
-        getCharacter("Press ENTER to continue...");
+        printf("[!] Unable to determine today's date.\n");
+        getCharacter("[?] Press ENTER to continue...");
         return;
     }
     
@@ -106,7 +90,7 @@ void addNotice()
             return;
         else if (ch != 'Y' && ch != 'y')
         {
-            printf("Invalid input. Please enter Y or N.\n");
+            printf("[!] Invalid input. Please enter Y or N.\n");
             continue;
         }
         clearScreen();
@@ -120,11 +104,11 @@ void addNotice()
 
         while (1)
         {
-            getString("Enter notice ID: ", NOTICE_ID_MAX_LENGTH, noticeID);
+            getString("[?] Enter notice ID: ", NOTICE_ID_MAX_LENGTH, noticeID);
 
             if (noticeID[0] == '\0' || strlen(noticeID) != 4)
             {
-                printf("Notice ID must be exactly 4 characters long and cannot be empty. Try again.\n");
+                printf("[!] Notice ID must be exactly 4 characters long and cannot be empty. Try again.\n");
                 continue;
             }
 
@@ -133,11 +117,11 @@ void addNotice()
         }
 
 
-        getString("Enter title: ", MAX_TITLE_LENGTH, title);
+        getString("[?] Enter title: ", MAX_TITLE_LENGTH, title);
 
         while (1)
         {
-            getString("Enter date (dd-mm-yyyy; leave blank for today's date): ",
+            getString("[?] Enter date (dd-mm-yyyy; leave blank for today's date): ",
                       MAX_DATE_LENGTH, date);
             if (date[0] == '\0')
                 snprintf(date, sizeof(date), "%s", today);
@@ -151,18 +135,18 @@ void addNotice()
             }
             else
             {
-                printf("Invalid date format. Please enter in dd-mm-yyyy format.\n");
+                printf("[!] Invalid date format. Please enter in dd-mm-yyyy format.\n");
             }
 
         }
 
-        getString("Enter details: ", MAX_BODY_LENGTH, details);
+        getString("[?] Enter details: ", MAX_BODY_LENGTH, details);
         strcpy(notice.Title, title);
         strcpy(notice.Description, details);
 
         createNoticeFile(&notice);
         printf("Notice added successfully!\n");
-        getCharacter("Press ENTER to continue...");
+        getCharacter("[?] Press ENTER to continue...");
     }
  
 }

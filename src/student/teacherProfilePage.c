@@ -26,8 +26,8 @@ void teacherProfilePage(const char *teacherId, const char *filepath)
     {
         clearScreen();
         printBoxedText("TEACHER PROFILE PAGE");
-        printf("Error opening file: %s\n", filepath);
-        getCharacter("Press ENTER to return to the teacher dashboard...");
+        printf("[!] Error opening file: %s\n", filepath);
+        getCharacter("[?] Press ENTER to return to the teacher dashboard...");
         return;
     }
 
@@ -38,9 +38,9 @@ void teacherProfilePage(const char *teacherId, const char *filepath)
     {
         clearScreen();
         printBoxedText("TEACHER PROFILE PAGE");
-        printf("Error reading teacher file header: %s\n", filepath);
+        printf("[!] Error reading teacher file header: %s\n", filepath);
         fclose(fp);
-        getCharacter("Press ENTER to return to the teacher dashboard...");
+        getCharacter("[?] Press ENTER to return to the teacher dashboard...");
         return;
     }
 
@@ -49,14 +49,14 @@ void teacherProfilePage(const char *teacherId, const char *filepath)
     {
         clearScreen();
         printBoxedText("TEACHER PROFILE PAGE");
-        printf("Error reading file: %s\n", filepath);
+        printf("[!] Error reading file: %s\n", filepath);
         fclose(fp);
-        getCharacter("Press ENTER to return to the teacher dashboard...");
+        getCharacter("[?] Press ENTER to return to the teacher dashboard...");
         return;
     }
 
     fclose(fp);
     showTeacherProfile(&record, teacherId);
-    getCharacter("Press ENTER to return to the teacher dashboard...");
+    getCharacter("[?] Press ENTER to return to the teacher dashboard...");
 
 }

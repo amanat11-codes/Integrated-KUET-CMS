@@ -11,7 +11,7 @@
 
 #define CHOICE_LAST 3
 
-void mainMenu()
+void mainMenu(void)
 {
     int choice;
 
@@ -23,7 +23,7 @@ void mainMenu()
         printf("================================================================\n");
         printf("                                                                \n");
         printf("                  KHULNA UNIVERSITY OF                          \n");
-        printf("              ENGINEERING & TECHNOLOGY                          \n");
+        printf("                ENGINEERING & TECHNOLOGY                          \n");
         printf("                                                                \n");
         printf("                  INTEGRATED KUET                     \n");
         printf("              CAMPUS MANAGEMENT SYSTEM                          \n");
@@ -54,15 +54,11 @@ void mainMenu()
         printf("----------------------------------------------------------------\n");
 
         printf("\n");
-        choice = getInt("  Enter your choice: ");
+        choice = getInt("  [?] Enter your choice: ");
 
         while (choice < 0 || choice > CHOICE_LAST)
         {
-            printf("\n");
-            printf("  [!] Invalid option. Please choose from 0 to %d.\n",
-                   CHOICE_LAST);
-
-            choice = getInt("  Enter your choice: ");
+            choice = getInt("  [?] Enter your choice: ");
 
             if (choice == 0)
             {
