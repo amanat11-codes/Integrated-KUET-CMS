@@ -1,74 +1,121 @@
-## ---- Project settings ----
-TARGET   := app
+.PHONY: all run clean
 
-SRC_DIR  := src
-INC_DIR  := headers
-BUILD_DIR:= build
+all: app.exe
 
-CC       := gcc
+app.exe: build/app.o build/admin/addNoticePage.o build/admin/adminDashboardPage.o build/admin/removeAccountPage.o build/admin/removeNoticePage.o build/authentication/adminLoginPage.o build/authentication/adminRegistrationPage.o build/authentication/loginPortal.o build/authentication/mainMenu.o build/authentication/registrationPortal.o build/authentication/studentLoginPage.o build/authentication/studentRegistrationPage.o build/authentication/teacherLoginPage.o build/authentication/teacherRegistrationPage.o build/notices/noticesPage.o build/student/academicInfoPage.o build/student/ctMarksPage.o build/student/hallDetailsPage.o build/student/libraryInfoPage.o build/student/studentDashboard.o build/student/studentProfilePage.o build/student/termMarksPage.o build/student/teacherProfilePage.o build/student/updateStudentProfile.o build/teacher/teacherDashboard.o build/teacher/updatePersonalInfo.o build/utility/utility.o
+	gcc -Wall -Wextra -std=c11 -g -o app.exe build/app.o build/admin/addNoticePage.o build/admin/adminDashboardPage.o build/admin/removeAccountPage.o build/admin/removeNoticePage.o build/authentication/adminLoginPage.o build/authentication/adminRegistrationPage.o build/authentication/loginPortal.o build/authentication/mainMenu.o build/authentication/registrationPortal.o build/authentication/studentLoginPage.o build/authentication/studentRegistrationPage.o build/authentication/teacherLoginPage.o build/authentication/teacherRegistrationPage.o build/notices/noticesPage.o build/student/academicInfoPage.o build/student/ctMarksPage.o build/student/hallDetailsPage.o build/student/libraryInfoPage.o build/student/studentDashboard.o build/student/termMarksPage.o build/student/studentProfilePage.o build/student/teacherProfilePage.o build/student/updateStudentProfile.o build/teacher/teacherDashboard.o build/teacher/updatePersonalInfo.o build/utility/utility.o
 
-## Every subfolder under headers/ (e.g. headers/teacher) is added as its
-## own -I path, so a .c file can #include "teacherDashboard.h" without
-## needing the "teacher/" prefix. Built by globbing for .h files and taking
-## just their directory ($(dir ...)), rather than relying on a trailing-slash
-## wildcard match -- that directory-only filtering isn't reliable in
-## mingw32-make on Windows and can pick up individual files as "directories".
-## Add another wildcard line below if you ever nest folders deeper than
-## headers/<feature>/<file>.h.
-INC_DIRS := $(sort $(INC_DIR) $(dir $(wildcard $(INC_DIR)/*/*.h)) $(dir $(wildcard $(INC_DIR)/*/*/*.h)))
-CFLAGS   := -Wall -Wextra -std=c11 -g $(addprefix -I,$(INC_DIRS))
-LDFLAGS  := 
+build/app.o: src/app.c
+	if not exist "build" mkdir "build"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/app.c -o build/app.o
 
-## ---- Sources (auto-detected) ----
-## Every .c file in src/ is picked up automatically, including files in
-## subfolders such as src/teacher. Just drop a new .c file in the right
-## src/ folder (and its .h in the matching headers/ folder) later --
-## no need to edit this Makefile. Add another wildcard line below if you
-## ever nest folders deeper than src/<feature>/<file>.c.
+build/admin/addNoticePage.o: src/admin/addNoticePage.c
+	if not exist "build\admin" mkdir "build\admin"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/admin/addNoticePage.c -o build/admin/addNoticePage.o
 
+build/admin/adminDashboardPage.o: src/admin/adminDashboardPage.c
+	if not exist "build\admin" mkdir "build\admin"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/admin/adminDashboardPage.c -o build/admin/adminDashboardPage.o
 
+build/admin/removeAccountPage.o: src/admin/removeAccountPage.c
+	if not exist "build\admin" mkdir "build\admin"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/admin/removeAccountPage.c -o build/admin/removeAccountPage.o
 
+build/admin/removeNoticePage.o: src/admin/removeNoticePage.c
+	if not exist "build\admin" mkdir "build\admin"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/admin/removeNoticePage.c -o build/admin/removeNoticePage.o
 
-SRCS     := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c) $(wildcard $(SRC_DIR)/*/*/*.c)
-OBJS     := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
-DEPS     := $(OBJS:.o=.d)
+build/authentication/adminLoginPage.o: src/authentication/adminLoginPage.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/adminLoginPage.c -o build/authentication/adminLoginPage.o
 
-## ---- OS-aware shell commands ----
-## mingw32-make runs recipes through cmd.exe on Windows, whose builtin
-## mkdir/rm don't take Unix flags like -p / -rf. Pick the right syntax
-## for whichever OS is actually running make.
-ifeq ($(OS),Windows_NT)
-    TARGET   := $(TARGET).exe
-    MKDIR    = if not exist "$(subst /,\,$1)" mkdir "$(subst /,\,$1)"
-    RM_RF    = if exist "$(subst /,\,$1)" rmdir /s /q "$(subst /,\,$1)"
-    RM_F     = if exist "$1" del /q "$1"
-else
-    MKDIR    = mkdir -p $1
-    RM_RF    = rm -rf $1
-    RM_F     = rm -f $1
-endif
+build/authentication/adminRegistrationPage.o: src/authentication/adminRegistrationPage.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/adminRegistrationPage.c -o build/authentication/adminRegistrationPage.o
 
-## ---- Rules ----
-.PHONY: all clean run
+build/authentication/loginPortal.o: src/authentication/loginPortal.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/loginPortal.c -o build/authentication/loginPortal.o
 
-all: $(TARGET)
+build/authentication/mainMenu.o: src/authentication/mainMenu.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/mainMenu.c -o build/authentication/mainMenu.o
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LDFLAGS)
+build/authentication/registrationPortal.o: src/authentication/registrationPortal.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/registrationPortal.c -o build/authentication/registrationPortal.o
 
-# Compile each src/**.c into a matching build/**.o, auto-generating header
-# dependencies (-MMD) so editing a .h triggers a rebuild of the right files.
-# The mkdir call recreates the source's subfolder layout (e.g. build/teacher/)
-# on demand, so no separate directory rule is needed.
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	@$(call MKDIR,$(dir $@))
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+build/authentication/studentLoginPage.o: src/authentication/studentLoginPage.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/studentLoginPage.c -o build/authentication/studentLoginPage.o
 
--include $(DEPS)
+build/authentication/studentRegistrationPage.o: src/authentication/studentRegistrationPage.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/studentRegistrationPage.c -o build/authentication/studentRegistrationPage.o
 
-run: $(TARGET)
-	./$(TARGET)
+build/authentication/teacherLoginPage.o: src/authentication/teacherLoginPage.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/teacherLoginPage.c -o build/authentication/teacherLoginPage.o
+
+build/authentication/teacherRegistrationPage.o: src/authentication/teacherRegistrationPage.c
+	if not exist "build\authentication" mkdir "build\authentication"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/authentication/teacherRegistrationPage.c -o build/authentication/teacherRegistrationPage.o
+
+build/notices/noticesPage.o: src/notices/noticesPage.c
+	if not exist "build\notices" mkdir "build\notices"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/notices/noticesPage.c -o build/notices/noticesPage.o
+
+build/student/academicInfoPage.o: src/student/academicInfoPage.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/academicInfoPage.c -o build/student/academicInfoPage.o
+
+build/student/ctMarksPage.o: src/student/ctMarksPage.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/ctMarksPage.c -o build/student/ctMarksPage.o
+
+build/student/hallDetailsPage.o: src/student/hallDetailsPage.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/hallDetailsPage.c -o build/student/hallDetailsPage.o
+
+build/student/libraryInfoPage.o: src/student/libraryInfoPage.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/libraryInfoPage.c -o build/student/libraryInfoPage.o
+
+build/student/studentDashboard.o: src/student/studentDashboard.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/studentDashboard.c -o build/student/studentDashboard.o
+
+build/student/studentProfilePage.o: src/student/studentProfilePage.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/studentProfilePage.c -o build/student/studentProfilePage.o
+
+build/student/termMarksPage.o: src/student/termMarksPage.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/termMarksPage.c -o build/student/termMarksPage.o
+
+build/student/teacherProfilePage.o: src/student/teacherProfilePage.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/teacherProfilePage.c -o build/student/teacherProfilePage.o
+
+build/student/updateStudentProfile.o: src/student/updateStudentProfile.c
+	if not exist "build\student" mkdir "build\student"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/student/updateStudentProfile.c -o build/student/updateStudentProfile.o
+
+build/teacher/teacherDashboard.o: src/teacher/teacherDashboard.c
+	if not exist "build\teacher" mkdir "build\teacher"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/teacher/teacherDashboard.c -o build/teacher/teacherDashboard.o
+
+build/teacher/updatePersonalInfo.o: src/teacher/updatePersonalInfo.c
+	if not exist "build\teacher" mkdir "build\teacher"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/teacher/updatePersonalInfo.c -o build/teacher/updatePersonalInfo.o
+
+build/utility/utility.o: src/utility/utility.c
+	if not exist "build\utility" mkdir "build\utility"
+	gcc -Wall -Wextra -std=c11 -g -Iheaders -Iheaders/admin -Iheaders/authentication -Iheaders/notices -Iheaders/student -Iheaders/teacher -Iheaders/utility -c src/utility/utility.c -o build/utility/utility.o
+
+run: app.exe
+	.\app.exe
 
 clean:
-	@$(call RM_RF,$(BUILD_DIR))
-	@$(call RM_F,$(TARGET))
+	if exist "build" rmdir /s /q "build"
+	if exist "app.exe" del /q "app.exe"
