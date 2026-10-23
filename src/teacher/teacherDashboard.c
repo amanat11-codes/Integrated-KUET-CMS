@@ -1,14 +1,9 @@
 #include <stdio.h>
-#include <stdint.h>
-#include <limits.h>
 #include "teacherProfilePage.h"
-#include "updateMarks.h"
 #include "utility.h"
 #include "updatePersonalInfo.h"
 
 #define TEACHER_DASHBOARD_LAST_CHOICE 4
-#define TEACHER_COURSE_NAME_LENGTH 12
-
 void teacherDashboard(const char *teacherId, const char *filepath)
 {
     TeacherFileHeader header;
@@ -16,12 +11,12 @@ void teacherDashboard(const char *teacherId, const char *filepath)
     FILE *fp = fopen(filepath, "rb+");
     if (fp == NULL)
     {
-        printf("Error opening file: %s\n", filepath);
+        printf("[!] Error opening file: %s\n", filepath);
         return;
     }
     if (fread(&header, sizeof(header), 1, fp) != 1)
     {
-        printf("Error reading teacher file header: %s\n", filepath);
+        printf("[!] Error reading teacher file header: %s\n", filepath);
         fclose(fp);
         return;
     }
@@ -29,7 +24,7 @@ void teacherDashboard(const char *teacherId, const char *filepath)
     if (fseek(fp, (long)header.teacherProfileOffset, SEEK_SET) != 0 ||
         fread(&record, sizeof(record), 1, fp) != 1)
     {
-        printf("Error reading teacher profile: %s\n", filepath);
+        printf("[!] Error reading teacher profile: %s\n", filepath);
         fclose(fp);
         return;
     }
@@ -41,17 +36,16 @@ void teacherDashboard(const char *teacherId, const char *filepath)
         printMenuItems(
             TEACHER_DASHBOARD_LAST_CHOICE,
             "Personal Information",
-            "Update Personal Information",
+            "Update Profile",
             "Update CT Marks",
             "Update Term Exam Marks");
         printf("0. Quit\n");
 
-        int choice = getInt("> ");
+        int choice = getInt("[?] > ");
 
         while (choice < 0 || choice > TEACHER_DASHBOARD_LAST_CHOICE)
         {
-            printf("Please input a valid option...\n");
-            choice = getInt("> ");
+            choice = getInt("[?] > ");
 
             if (choice == 0)
             {
@@ -65,6 +59,8 @@ void teacherDashboard(const char *teacherId, const char *filepath)
             fclose(fp);
             return;
         }
+        while (getchar() != '\n')
+            ; // Clear the input buffer
 
         switch (choice)
         {
@@ -78,20 +74,20 @@ void teacherDashboard(const char *teacherId, const char *filepath)
                 fwrite(&updatedProfile, sizeof(updatedProfile), 1, fp) != 1 ||
                 fflush(fp) != 0)
             {
-                printf("Error writing updated profile to file: %s\n", filepath);
+                printf("[!] Error writing updated profile to file: %s\n", filepath);
             }
             else
                 record = updatedProfile;
             break;
         }
         case 3:
-            updateCTMarks(fp, &header);
+            getCharacter("Feature under development\n");
             break;
         case 4:
-            printf("Update Term Exam Marks functionality is not implemented yet.\n");
+            getCharacter("Feature under development\n");
             break;
         default:
-            printf("Invalid choice. Please try again.\n");
+            printf("[!] Invalid choice. Please try again.\n");
             break;
         }
     }

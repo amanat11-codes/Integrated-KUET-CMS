@@ -1,27 +1,116 @@
 #include <stdio.h>
 #include <string.h>
 #include "mainMenu.h"
-#include "studentDashboard.h"
-#include "hallDetailsPage.h"
+#include "noticesPage.h"
+#include "studentLoginPage.h"
+#include "teacherLoginPage.h"
+#include "adminLoginPage.h"
+#include "studentRegistrationPage.h"
+#include "teacherRegistrationPage.h"
+#include "adminRegistrationPage.h"
 
-int main(void)
+static void invalidCommandLineArgs(char *appName)
 {
-    mainMenu();
-
-    /*
-    User ID: 10000001 | Password: 00000000 | User type: 1 (teacher)
-    User ID: 52501001 | Password: 00000000 | User type: 2 (student)
-    User ID: 1001 | Password: 2002 | User type: 3 (admin)
-    */
-
-    /*
-    - Test the current features of the system
-    - Prepare the documentation
-    - Go through the code and try to understand the logic and flow of the program
-    - List the features that are not yet implemented : are they necessary?
-
-    */
-
-    return 0;
+    printf("[!] ERROR: Invalid command line arguments.\n");
+    printf("Usage: ./%s [notices]\n", appName);
+    printf("Alt: ./%s [login|register] [teacher|student|admin]\n", appName);
 }
 
+int main(int argc, char *argv[])
+{
+
+    switch (argc)
+    {
+    case 1:
+    {
+        mainMenu();
+        return 0;
+    }
+    case 2:
+    {
+        if (strcmp(argv[1], "notices") == 0 ||
+            strcmp(argv[1], "Notices") == 0 ||
+            strcmp(argv[1], "NOTICES") == 0)
+        {
+            noticesPage();
+            break;
+        }
+
+        invalidCommandLineArgs("app");
+        return 1;
+    }
+    case 3:
+    {
+        if (strcmp(argv[1], "login") == 0 ||
+            strcmp(argv[1], "Login") == 0 ||
+            strcmp(argv[1], "LOGIN") == 0)
+        {
+            if (strcmp(argv[2], "teacher") == 0 ||
+                strcmp(argv[2], "Teacher") == 0 ||
+                strcmp(argv[2], "TEACHER") == 0)
+            {
+                teacherLoginPage();
+                break;
+            }
+            else if (strcmp(argv[2], "student") == 0 ||
+                     strcmp(argv[2], "Student") == 0 ||
+                     strcmp(argv[2], "STUDENT") == 0)
+            {
+                studentLoginPage();
+                break;
+            }
+            else if (strcmp(argv[2], "admin") == 0 ||
+                     strcmp(argv[2], "Admin") == 0 ||
+                     strcmp(argv[2], "ADMIN") == 0)
+            {
+                adminLoginPage();
+                break;
+            }
+            else
+            {
+                invalidCommandLineArgs("app");
+                return 1;
+            }
+        }
+        else if (strcmp(argv[1], "register") == 0 ||
+                 strcmp(argv[1], "Register") == 0 ||
+                 strcmp(argv[1], "REGISTER") == 0)
+        {
+            if (strcmp(argv[2], "teacher") == 0 ||
+                strcmp(argv[2], "Teacher") == 0 ||
+                strcmp(argv[2], "TEACHER") == 0)
+            {
+                teacherRegistrationPage();
+                break;
+            }
+            else if (strcmp(argv[2], "student") == 0 ||
+                     strcmp(argv[2], "Student") == 0 ||
+                     strcmp(argv[2], "STUDENT") == 0)
+            {
+                studentRegistrationPage();
+                break;
+            }
+            else if (strcmp(argv[2], "admin") == 0 ||
+                     strcmp(argv[2], "Admin") == 0 ||
+                     strcmp(argv[2], "ADMIN") == 0)
+            {
+                adminRegistrationPage();
+                break;
+            }
+            else
+            {
+                invalidCommandLineArgs("app");
+                return 1;
+            }
+        }
+        else
+        {
+            invalidCommandLineArgs("app");
+            return 1;
+        }
+        break;
+    }
+    }
+    mainMenu();
+    return 0;
+}

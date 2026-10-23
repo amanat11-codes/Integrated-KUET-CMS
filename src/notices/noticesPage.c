@@ -20,6 +20,11 @@ static int isNoticeFile(const char *filename)
            strcmp(filename + filenameLength - extensionLength, extension) == 0;
 }
 
+
+/*
+check all code line by line following the flow
+*/
+
 int getNoticesCount(void)
 {
     DIR *dir;
@@ -29,7 +34,7 @@ int getNoticesCount(void)
     dir = opendir(NOTICE_DIRECTORY);
     if (dir == NULL)
     {
-        printf("Error: Could not open notices directory.\n");
+        printf("[!] Error: Could not open notices directory.\n");
         return 0;
     }
 
@@ -51,7 +56,7 @@ int fetchAllNotices(Notice *notices, int count)
     dir = opendir(NOTICE_DIRECTORY);
     if (dir == NULL)
     {
-        printf("Error: Could not open notices directory.\n");
+        printf("[!] Error: Could not open notices directory.\n");
         return 0;
     }
 
@@ -83,7 +88,7 @@ int fetchAllNotices(Notice *notices, int count)
     return i;
 }
 
-void generatePreview(char *dest, const char *src, int maxLength)
+static void generatePreview(char *dest, const char *src, int maxLength)
 {
     size_t sourceLength = strlen(src);
 
@@ -112,7 +117,7 @@ void generatePreview(char *dest, const char *src, int maxLength)
     }
 }
 
-void showNoticeDetails(Notice *notices, char *id, int count)
+static void showNoticeDetails(Notice *notices, char *id, int count)
 {
     clearScreen();
 
@@ -124,13 +129,13 @@ void showNoticeDetails(Notice *notices, char *id, int count)
             printf("%s\n%s\n\n%s\n", notices[i].noticeId,
                    showDate(notices[i].date), notices[i].Description);
             printf("================================================\n");
-            getCharacter("Press ENTER to go back...");
+            getCharacter("[?] Press ENTER to go back...");
             clearScreen();
             return;
         }
     }
-    printf("Notice not found.\n");
-    getCharacter("Press ENTER to go back...");
+    printf("[!] Notice not found.\n");
+    getCharacter("[?] Press ENTER to go back...");
     clearScreen();
 }
 
@@ -171,24 +176,25 @@ int noticeExists(const char *noticeId)
     return 0;
 }
 
-void noticesPage()
+void noticesPage(void)
 {
     clearScreen();
+    while(getchar() != '\n'); // Clear the input buffer
     printBoxedText("NOTICES");
 
     int count = getNoticesCount();
     if (count == 0)
     {
         printf("No notices found.\n");
-        getCharacter("Press ENTER to go back...\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 
     Notice *notices = malloc(count * sizeof(Notice));
     if (notices == NULL)
     {
-        printf("Error: Could not allocate memory for notices.\n");
-        getCharacter("Press ENTER to go back...\n");
+        printf("[!] Error: Could not allocate memory for notices.\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 
@@ -197,7 +203,7 @@ void noticesPage()
     {
         free(notices);
         printf("No readable notices found.\n");
-        getCharacter("Press ENTER to go back...\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 
@@ -208,7 +214,7 @@ void noticesPage()
         displayNoticeList(notices, count);
         printf("\n");
         printf("\nEnter notice ID to open a notice (0 to go back)\n");
-        getString("> ", sizeof(choice), choice);
+        getString("[?] > ", sizeof(choice), choice);
         
         if (strcmp(choice, "0") == 0)
         {
@@ -218,8 +224,14 @@ void noticesPage()
 
         while(!noticeExists(choice))
         {
+            if (strcmp(choice, "0") == 0)
+            {
+                free(notices);
+                return;
+            }
+
             printf("Please input a valid ID from the list\n");
-            getString("> ", sizeof(choice), choice);
+            getString("[?] > ", sizeof(choice), choice);
         }
 
         showNoticeDetails(notices, choice, count);

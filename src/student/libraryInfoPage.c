@@ -5,7 +5,7 @@
 #include "studentDashboard.h"
 #include "libraryInfoPage.h"
 
-void showLibraryInfo(LibraryDetails *record, const char *student_id)
+static void showLibraryInfo(LibraryDetails *record, const char *student_id)
 {
     /* Page heading */
     printf("\n\n");
@@ -63,10 +63,10 @@ void libraryInfoPage(const char *student_id, const char *filepath)
         printf("\n");
         printBoxedText("LIBRARY INFORMATION");
 
-        printf("\n       Unable to open the library record.\n");
+        printf("[!] \n       Unable to open the library record.\n");
         printf("       File: %s\n\n", filepath);
 
-        getCharacter("Press ENTER to return to the student dashboard...");
+        getCharacter("[?] Press ENTER to return to the student dashboard...");
         return;
     }
 
@@ -82,12 +82,12 @@ void libraryInfoPage(const char *student_id, const char *filepath)
         printf("\n");
         printBoxedText("LIBRARY INFORMATION");
 
-        printf("\n       Unable to read the library record.\n");
+        printf("[!] \n       Unable to read the library record.\n");
         printf("       Please check the student data file.\n\n");
 
         fclose(fp);
 
-        getCharacter("Press ENTER to return to the student dashboard...");
+        getCharacter("[?] Press ENTER to return to the student dashboard...");
         return;
     }
     
@@ -97,5 +97,5 @@ void libraryInfoPage(const char *student_id, const char *filepath)
 
     printf("\n");
 
-    getCharacter("Press ENTER to return to the student dashboard...");
+    getCharacter("[?] Press ENTER to return to the student dashboard...");
 }

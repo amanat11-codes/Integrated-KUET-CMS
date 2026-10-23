@@ -18,5 +18,5 @@ void adminRegistrationPage(void)
     printf("      to have an admin account created.\n");
     printf("\n");
 
-    getCharacter("  Press ENTER to return...");
+    getCharacter("[?]   Press ENTER to return...");
 }

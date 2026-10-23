@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "removeNoticePage.h"
 #include "noticesPage.h"
 #include "utility.h"
 
@@ -18,7 +19,7 @@ static int removeNoticeById(const char *noticeId)
     return remove(filepath) == 0;
 }
 
-void removeNoticePage()
+void removeNoticePage(void)
 {
     clearScreen();
     printBoxedText("NOTICES");
@@ -27,15 +28,15 @@ void removeNoticePage()
     if (count == 0)
     {
         printf("No notices found.\n");
-        getCharacter("Press ENTER to go back...\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 
     Notice *notices = malloc(count * sizeof(Notice));
     if (notices == NULL)
     {
-        printf("Error: Could not allocate memory for notices.\n");
-        getCharacter("Press ENTER to go back...\n");
+        printf("[!] Error: Could not allocate memory for notices.\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 
@@ -44,7 +45,7 @@ void removeNoticePage()
     {
         free(notices);
         printf("No readable notices found.\n");
-        getCharacter("Press ENTER to go back...\n");
+        getCharacter("[?] Press ENTER to go back...\n");
         return;
     }
 
@@ -55,7 +56,7 @@ void removeNoticePage()
         displayNoticeList(notices, count);
         printf("\n");
         printf("\nEnter notice ID to remove a notice (0 to go back)\n");
-        getString("> ", sizeof(choice), choice);
+        getString("[?] > ", sizeof(choice), choice);
         
         if (strcmp(choice, "0") == 0)
         {
@@ -73,8 +74,8 @@ void removeNoticePage()
 
         if (!removeNoticeById(choice))
         {
-            printf("Error: Could not remove notice %s.\n", choice);
-            getCharacter("Press ENTER to continue...");
+            printf("[!] Error: Could not remove notice %s.\n", choice);
+            getCharacter("[?] Press ENTER to continue...");
             continue;
         }
 
@@ -92,11 +93,11 @@ void removeNoticePage()
         printf("Notice %s removed successfully.\n", choice);
         if (count == 0)
         {
-            getCharacter("Press ENTER to go back...");
+            getCharacter("[?] Press ENTER to go back...");
             break;
         }
 
-        getCharacter("Press ENTER to refresh the list...");
+        getCharacter("[?] Press ENTER to refresh the list...");
     }
 
     free(notices);

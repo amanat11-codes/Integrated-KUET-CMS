@@ -55,7 +55,7 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  Enter Teacher ID (first 8 digits are taken): ", sizeof(teacherId), teacherId);
+        getString("[?]   Enter Teacher ID (first 8 digits are taken): ", sizeof(teacherId), teacherId);
 
         if (teacherId[0] == '\0' || isAllDigits(teacherId) == 0)
         {
@@ -88,7 +88,7 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  Enter Password (first 8 characters are taken): ", sizeof(password), password);
+        getString("[?]   Enter Password (first 8 characters are taken): ", sizeof(password), password);
 
         if (password[0] == '\0' || isAllDigits(password) == 0)
         {
@@ -96,7 +96,7 @@ void teacherRegistrationPage(void)
             continue;
         }
 
-        getString("  Confirm Password: ", sizeof(confirmPass), confirmPass);
+        getString("[?]   Confirm Password: ", sizeof(confirmPass), confirmPass);
 
         if (strcmp(password, confirmPass) != 0)
         {
@@ -115,7 +115,7 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nFull Name: ", sizeof(name), name);
+        getString("[?]   \n\nFull Name: ", sizeof(name), name);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
             break;
@@ -125,7 +125,7 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nDesignation (e.g. Professor, Lecturer): ",
+        getString("[?]   \n\nDesignation (e.g. Professor, Lecturer): ",
                   sizeof(designation), designation);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
@@ -136,7 +136,7 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nDepartment (e.g. Computer Science & Engineering): ",
+        getString("[?]   \n\nDepartment (e.g. Computer Science & Engineering): ",
                   sizeof(department), department);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
@@ -147,7 +147,7 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nPhone Number (e.g. 01XXXXXXXXX): ",
+        getString("[?]   \n\nPhone Number (e.g. 01XXXXXXXXX): ",
                   sizeof(phone), phone);
         char ch = getCharacter("  [?] Is this correct? (Y/N): ");
         if (ch == 'Y' || ch == 'y')
@@ -158,7 +158,7 @@ void teacherRegistrationPage(void)
 
     while (1)
     {
-        getString("  \n\nEmail Address: ", sizeof(email), email);
+        getString("[?]   \n\nEmail Address: ", sizeof(email), email);
         if (validateEmailFormat(email, TEACHER) == 0)
         {
             char ch = getCharacter("  [?] Is this correct? (Y/N): ");
@@ -210,7 +210,7 @@ void teacherRegistrationPage(void)
     {
         printf("  [!] Error: Could not create teacher file at: %s\n", filepath);
         printf("      Make sure the database/teachers/ directory exists.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -224,7 +224,7 @@ void teacherRegistrationPage(void)
     {
         remove(filepath);
         printf("  [!] Error writing teacher file. Registration aborted.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -242,7 +242,7 @@ void teacherRegistrationPage(void)
     {
         printf("  [!] Error: Could not open credentials file.\n");
         printf("      Teacher file was not retained because credentials were NOT saved.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -254,7 +254,7 @@ void teacherRegistrationPage(void)
     {
         remove(filepath);
         printf("  [!] Error writing credentials. Please contact an administrator.\n");
-        getCharacter("\n  Press ENTER to return...");
+        getCharacter("[?] \n  Press ENTER to return...");
         return;
     }
 
@@ -269,5 +269,5 @@ void teacherRegistrationPage(void)
     printf("  You can now log in through the Login Portal.\n");
     printf("\n");
 
-    getCharacter("  Press ENTER to return to the Registration Portal...");
+    getCharacter("[?]   Press ENTER to return to the Registration Portal...");
 }

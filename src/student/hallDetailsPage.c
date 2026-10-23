@@ -113,13 +113,13 @@ static int validateMealOffDates(
     struct tm parsedEnd;
 
     if (!parseDate(startDate, &parsedStart)) {
-        printf("\n[ERROR] Invalid start date: %s\n", startDate);
+        printf("\n[!] [ERROR] Invalid start date: %s\n", startDate);
         printf("Use a valid DD-MM-YYYY date.\n");
         return 0;
     }
 
     if (!parseDate(endDate, &parsedEnd)) {
-        printf("\n[ERROR] Invalid end date: %s\n", endDate);
+        printf("\n[!] [ERROR] Invalid end date: %s\n", endDate);
         printf("Use a valid DD-MM-YYYY date.\n");
         return 0;
     }
@@ -130,16 +130,16 @@ static int validateMealOffDates(
     if (start == (time_t)-1 ||
         end == (time_t)-1 ||
         today == (time_t)-1) {
-        printf("\n[ERROR] Could not validate the dates.\n");
+        printf("\n[!] [ERROR] Could not validate the dates.\n");
         return 0;
     }
     if (start <= today) {
-        printf("\n[ERROR] Meal OFF must start from tomorrow onwards.\n");
+        printf("\n[!] [ERROR] Meal OFF must start from tomorrow onwards.\n");
         return 0;
     }
 
     if (end < start) {
-        printf("\n[ERROR] End date cannot be before start date.\n");
+        printf("\n[!] [ERROR] End date cannot be before start date.\n");
         return 0;
     }
     return 1;
@@ -170,7 +170,7 @@ static int readLine(
             while ((ch = getchar()) != '\n' && ch != EOF)
                 ;
 
-            printf("\n[ERROR] Input is too long.\n");
+            printf("\n[!] [ERROR] Input is too long.\n");
             return 0;
         }
     }
@@ -188,7 +188,7 @@ static int readMenuChoice(int *choice)
     char input[32];
     char *end;
 
-    if (!readLine("Enter your choice: ", input, sizeof(input)))
+    if (!readLine("[?] Enter your choice: ", input, sizeof(input)))
         return 0;
 
     long value = strtol(input, &end, 10);
@@ -216,7 +216,7 @@ static int readHallRecord(
     FILE *fp = fopen(filepath, "rb");
 
     if (fp == NULL) {
-        printf("\n[ERROR] Cannot open file: %s\n", filepath);
+        printf("\n[!] [ERROR] Cannot open file: %s\n", filepath);
         return 0;
     }
 
@@ -257,7 +257,7 @@ static int readHallRecord(
 
 cleanup:
     if (!success)
-        printf("\n[ERROR] Invalid or incomplete student data file.\n");
+        printf("\n[!] [ERROR] Invalid or incomplete student data file.\n");
 
     fclose(fp);
     return success;
@@ -275,7 +275,7 @@ static int writeHallRecord(
     FILE *fp = fopen(filepath, "rb+");
 
     if (fp == NULL) {
-        printf("\n[ERROR] Cannot open file for updating.\n");
+        printf("\n[!] [ERROR] Cannot open file for updating.\n");
         return 0;
     }
 
@@ -309,7 +309,7 @@ static int writeHallRecord(
 
 cleanup:
     if (!success)
-        printf("\n[ERROR] Failed to save Hall Details.\n");
+        printf("\n[!] [ERROR] Failed to save Hall Details.\n");
 
     if (fclose(fp) != 0)
         success = 0;
@@ -356,7 +356,7 @@ static int getEffectiveMealStatus(
         start == (time_t)-1 ||
         end == (time_t)-1 ||
         end < start) {
-        printf("\n[WARNING] Invalid saved Meal OFF dates.\n");
+        printf("\n[!] [WARNING] Invalid saved Meal OFF dates.\n");
         return -1;
     }
 
@@ -391,8 +391,8 @@ static void setMealOffPeriod(const char *filepath)
     char today[11];
 
     if (!getTodayDateString(today, sizeof(today))) {
-        printf("\n[ERROR] Could not determine today's date.\n");
-        getCharacter("\nPress ENTER to return...");
+        printf("\n[!] [ERROR] Could not determine today's date.\n");
+        getCharacter("[?] \nPress ENTER to return...");
         return;
     }
 
@@ -403,7 +403,7 @@ static void setMealOffPeriod(const char *filepath)
         printf("\nDate format: DD-MM-YYYY\n");
         printf("Enter 0 at either prompt to cancel.\n\n");
 
-        if (!readLine("Enter date (dd-mm-yyyy; leave blank for today's date): ",
+        if (!readLine("[?] Enter date (dd-mm-yyyy; leave blank for today's date): ",
                       startDate, sizeof(startDate)))
             continue;
 
@@ -413,7 +413,7 @@ static void setMealOffPeriod(const char *filepath)
         if (startDate[0] == '\0')
             strcpy(startDate, today);
 
-        if (!readLine("Enter date (dd-mm-yyyy; leave blank for today's date): ",
+        if (!readLine("[?] Enter date (dd-mm-yyyy; leave blank for today's date): ",
                       endDate, sizeof(endDate)))
             continue;
 
@@ -424,7 +424,7 @@ static void setMealOffPeriod(const char *filepath)
             strcpy(endDate, today);
 
         if (!validateMealOffDates(startDate, endDate)) {
-            getCharacter("\nPress ENTER to try again...");
+            getCharacter("[?] \nPress ENTER to try again...");
             continue;
         }
 
@@ -432,7 +432,7 @@ static void setMealOffPeriod(const char *filepath)
         HallDetails record;
 
         if (!readHallRecord(filepath, &header, &record)) {
-            getCharacter("\nPress ENTER to return...");
+            getCharacter("[?] \nPress ENTER to return...");
             return;
         }
 
@@ -442,8 +442,8 @@ static void setMealOffPeriod(const char *filepath)
          */
         if (sizeof(record.offStartDate) < 11 ||
             sizeof(record.offEndDate) < 11) {
-            printf("\n[ERROR] Date fields must have at least 11 bytes.\n");
-            getCharacter("\nPress ENTER to return...");
+            printf("\n[!] [ERROR] Date fields must have at least 11 bytes.\n");
+            getCharacter("[?] \nPress ENTER to return...");
             return;
         }
 
@@ -458,7 +458,7 @@ static void setMealOffPeriod(const char *filepath)
             printf("Meal OFF Until : %s\n", endDate);
         }
 
-        getCharacter("\nPress ENTER to return...");
+        getCharacter("[?] \nPress ENTER to return...");
         return;
     }
 }
@@ -473,7 +473,7 @@ static void turnOnMeal(const char *filepath)
     HallDetails record;
 
     if (!readHallRecord(filepath, &header, &record)) {
-        getCharacter("\nPress ENTER to return...");
+        getCharacter("[?] \nPress ENTER to return...");
         return;
     }
 
@@ -485,14 +485,14 @@ static void turnOnMeal(const char *filepath)
     if (writeHallRecord(filepath, &header, &record))
         printf("\n[SUCCESS] Meal is now ON.\n");
 
-    getCharacter("\nPress ENTER to return...");
+    getCharacter("[?] \nPress ENTER to return...");
 }
 
 /* =====================================================
    8. DISPLAY HALL DETAILS
    ===================================================== */
 
-void showHallDetails(
+static void showHallDetails(
     HallDetails *record,
     const char *student_id)
 {
@@ -526,7 +526,7 @@ void showHallDetails(
              end == (time_t)-1 ||
              end < start) {
         printf("Meal Status        : UNKNOWN\n");
-        printf("Meal OFF Period    : Invalid saved schedule\n");
+        printf("[!] Meal OFF Period    : Invalid saved schedule\n");
     }
     else {
         printf("Meal OFF From      : %s\n", record->offStartDate);
@@ -562,7 +562,7 @@ void hallDetailsPage(
     int choice;
 
     if (student_id == NULL || filepath == NULL) {
-        printf("\n[ERROR] Missing student ID or file path.\n");
+        printf("\n[!] [ERROR] Missing student ID or file path.\n");
         return;
     }
 
@@ -573,7 +573,7 @@ void hallDetailsPage(
         HallDetails record;
 
         if (!readHallRecord(filepath, &header, &record)) {
-            getCharacter("\nPress ENTER to return to dashboard...");
+            getCharacter("[?] \nPress ENTER to return to dashboard...");
             return;
         }
 
@@ -588,7 +588,7 @@ void hallDetailsPage(
          * validation or file update failed.
          */
         if (status == -1) {
-            printf("\n[WARNING] Meal status could not be verified.\n");
+            printf("\n[!] [WARNING] Meal status could not be verified.\n");
         } else {
             record.mealStatus = status;
         }
@@ -601,8 +601,8 @@ void hallDetailsPage(
         printf("3. Back to Dashboard\n");
 
         if (!readMenuChoice(&choice)) {
-            printf("\n[ERROR] Enter a valid choice from 1 to 3.\n");
-            getCharacter("Press ENTER to continue...");
+            printf("\n[!] [ERROR] Enter a valid choice from 1 to 3.\n");
+            getCharacter("[?] Press ENTER to continue...");
             continue;
         }
 

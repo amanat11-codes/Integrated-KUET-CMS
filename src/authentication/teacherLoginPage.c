@@ -15,13 +15,13 @@ void teacherLoginPage(void)
     {
         clearScreen();
         printBoxedText("TEACHER LOGIN");
-        getString("Enter Teacher ID: ", sizeof(teacher_id), teacher_id);
-        getString("Enter Password: ", sizeof(password), password);
+        getString("[?] Enter Teacher ID:  ", sizeof(teacher_id), teacher_id);
+        getString("[?] Enter Password:    ", sizeof(password), password);
 
         FILE *credentialsFile = fopen("database/credentials.dat", "rb");
         if (credentialsFile == NULL)
         {
-            getCharacter("Unable to open credentials file. Press ENTER to return...");
+            getCharacter("[?] Unable to open credentials file. Press ENTER to return...");
             return;
         }
 
@@ -38,16 +38,16 @@ void teacherLoginPage(void)
         case SUCCESS:
         {
             char filepath[256];
-            getCharacter("Login successful! Press ENTER to continue...");
+            getCharacter("[?] Login successful! Press ENTER to continue...");
             getFilePathForUserType(teacher_id, TEACHER, filepath);
             teacherDashboard(teacher_id, filepath);
             return;
         }
         case INVALID_CREDENTIALS:
-            getCharacter("Invalid Teacher ID or Password. Press ENTER to return to login menu...");
+            getCharacter("[?] Invalid Teacher ID or Password. Press ENTER to return to login menu...");
             return;
         case RECORD_NOT_FOUND:
-            getCharacter("Teacher record not found. Press ENTER to return to login menu...");
+            getCharacter("[?] Teacher record not found. Press ENTER to return to login menu...");
             return;
         }
     }
