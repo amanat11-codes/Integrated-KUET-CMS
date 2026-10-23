@@ -36,9 +36,9 @@ void registrationPortal(void)
 
         printMenuItems(
             REGISTRATION_PORTAL_LAST_CHOICE,
-            "Register as Teacher",
-            "Register as Student",
-            "Register as Admin"
+            "Register as a Teacher",
+            "Register as a Student",
+            "Register as a Admin"
         );
 
         printf("\n");

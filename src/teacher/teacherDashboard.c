@@ -72,6 +72,7 @@ void teacherDashboard(const char *teacherId, const char *filepath)
             teacherProfilePage(teacherId, filepath);
             break;
         case 2:
+        {
             TeacherProfile updatedProfile = updatePersonalInfo(&record, teacherId, filepath);
             if (fseek(fp, (long)header.teacherProfileOffset, SEEK_SET) != 0 ||
                 fwrite(&updatedProfile, sizeof(updatedProfile), 1, fp) != 1 ||
@@ -82,6 +83,7 @@ void teacherDashboard(const char *teacherId, const char *filepath)
             else
                 record = updatedProfile;
             break;
+        }
         case 3:
             updateCTMarks(fp, &header);
             break;
